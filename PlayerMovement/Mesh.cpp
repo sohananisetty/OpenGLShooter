@@ -14,6 +14,17 @@ Mesh::Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture
     setupMesh();
 }
 
+Mesh::Mesh(vector<Vertex> vertices, vector<unsigned int> indices)
+{
+    this->vertices = vertices;
+    this->indices = indices;
+    // now that we have all the required data, set the vertex buffers and its attribute pointers.
+    setupMesh();
+}
+
+
+
+
 // render the mesh
 void Mesh::Draw(Shader& shader)
 {

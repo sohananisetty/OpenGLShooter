@@ -15,6 +15,8 @@
 #include "Enemy.h"
 #include "SpriteRenderer.h"
 #include "Animator.h"
+#include "Settings.h"
+#include "GameLevel.h"
 
 #include <iostream>
 #include <random>
@@ -24,38 +26,30 @@
 
 void bulletHandler(vector<Bullet>& bullets, vector<Enemy>&objects , Shader shader, float deltaTime);
 void playerCollisionCheck(Player player, vector<Enemy>& objects);
+void playerCollisionCheck(Player player, vector<GameObject>& objects);
 glm::vec3 spawnPosition(glm::vec3 playerPosition);
+
+Settings settings;
 // window
 const float toRadians = 3.14159265f / 180.0f;
 Window mainWindow;
 
-// settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
-const float BULLET_SPEED = 20.0f;
-const float BULLET_SCALE = 0.05f;
 
-const float PLAYER_SCALE = 0.005f;
-const float PLAYER_YAW_OFFSET = 90.0f;
+enum class GameState {
 
-const float ENEMY_SCALE = 0.007f;
-const float ENEMY_SPEED = 2.0f;
-const float SPAWN_RADIUS_MAX = 10.0f;
-const float SPAWN_RADIUS_MIN = 2.0f;
-const float SPAWN_DELAY = 2.0f;
+    GAME_ACTIVE,
+    GAME_MENU,
+    GAME_WIN
+};
 
-const float ENEMY_YAW_OFFSET = 90.0f;
-
-const float TERRAIN_HEIGHT = 0.0f;
-const float TERRAIN_SCALE = 40.0f;
 
 // camera
 glm::vec3 cameraOffset = glm::vec3(0.0f, 3.0f, 3.0f);
 Camera camera(cameraOffset);
 
 //projection matrices
-glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-glm::mat4 orthoProjection = glm::ortho(0.0f, (float)SCR_WIDTH, (float)SCR_HEIGHT, 0.0f, -1.0f, 1.0f);
+glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)settings.SCR_WIDTH / (float)settings.SCR_HEIGHT, 0.1f, 100.0f);
+glm::mat4 orthoProjection = glm::ortho(0.0f, (float)settings.SCR_WIDTH, (float)settings.SCR_HEIGHT, 0.0f, -1.0f, 1.0f);
 
 
 // timing
@@ -66,33 +60,43 @@ float lastEnemyFrame = 1.0f;
 
 float crosshairRadius = 300.0f;
 
+GameState state = GameState::GAME_MENU;
 
 int main()
 {
-    mainWindow = Window(800, 600);
+    GameLevel level;
+    mainWindow = Window(settings.SCR_WIDTH, settings.SCR_HEIGHT);
     mainWindow.intitialise();
-
     stbi_set_flip_vertically_on_load(true);
 
 
     // build and compile shaders
     // -------------------------
-
+    Shader basicShader("Shaders/basic_vertex_shader.vs", "Shaders/basic_fragment_shader.fs");
     Shader shader("Shaders/vertex_shader.vs", "Shaders/fragment_shader.fs");
     Shader animationShader("Shaders/vertex_shader_animation.vs", "Shaders/fragment_shader_animation.fs");
 
     Shader spriteShader("Shaders/sprite_vertex_shader.vs", "Shaders/sprite_fragment_shader.fs");
     Texture2D crosshair("cross2.png", "C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/sprites", false);
+    Texture2D menue("menue.jpg", "C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/sprites", false);
+
     SpriteRenderer spriteRenderer(spriteShader);
 
 
     // load models
     // -----------
-    Model floorModel(("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/floor/floor.obj") , TERRAIN_SCALE*2);
+    Model floorModel(("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/floor/floor.obj") , settings.TERRAIN_SCALE*2);
+   // Model envModel(("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/Env/environment.obj"));
+
+    Model boxModel(("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/box/box.obj"));
+
     Model bulletModel(("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/bullets/bullet.obj"));
     
     Model zombieModel(("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/Mutant/Mutant.fbx"));
+    
     Animation zombieRunAnimation("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/Mutant/Mutant.fbx", &zombieModel);
+    Animation zombieMeleeAnimation("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/Mutant/MeeleCombo.fbx", &zombieModel);
+    
     Animator zombieAnimator(&zombieRunAnimation);
 
 
@@ -108,12 +112,18 @@ int main()
     
     //Init models
 
-    GameObject floor(glm::vec3(0.0f, 0.0f, 0.0f) , TERRAIN_SCALE);
+    level.Load("level1.json");
+
+    GameObject floor(glm::vec3(0.0f, 0.0f, 0.0f) , glm::vec3(settings.TERRAIN_SCALE));
     floor.LinkMesh(floorModel);
 
     Player player;
+    player.objectSize = glm::vec3(settings.PLAYER_SCALE);
     player.LinkMesh(playerModel);
-    player.objectSize = PLAYER_SCALE;
+
+
+    GameObject box(player.objectPosition);
+    box.LinkMesh(boxModel);
 
     bool flagAnim = false;
 
@@ -127,130 +137,203 @@ int main()
 
     {
 
-        float currentFrame = static_cast<float>(glfwGetTime());
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
-
-
-       
-        // input
-        // -----
-
-        player.ProcessKeyboard(mainWindow.getsKeys() , deltaTime);
-        player.ProcessMouseMovement(mainWindow.getXChange());
-
-        if (player.currentMovement == Object_Movement::FORWARD && player.lastMovement != player.currentMovement) {
-            playerAnimator.NewAnimation(&playerRunAnimation);
-
-
-        }
-        else if (player.currentMovement == Object_Movement::BACKWARD && player.lastMovement != player.currentMovement) {
-            playerAnimator.NewAnimation(&playerRunBackAnimation);
-
-
-        }
-       
-        
-        else if (player.currentMovement == Object_Movement::RIGHT && player.lastMovement != player.currentMovement) {
-            playerAnimator.NewAnimation(&playerRunRightAnimation);
-
-
-        }
-        else if (player.currentMovement == Object_Movement::LEFT && player.lastMovement != player.currentMovement) {
-            playerAnimator.NewAnimation(&playerRunLeftAnimation);
-
-        }
-
-        zombieAnimator.UpdateAnimation(deltaTime);
-        playerAnimator.UpdateAnimation(deltaTime);
-        // render
-        // ------
         glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-        animationShader.use();
-        animationShader.setBool("useLight", false);
-        animationShader.setMat4("projection", projection);
+        if (state == GameState::GAME_MENU) {
 
-        // render the Player model
+            spriteShader.use();
+            spriteShader.setMat4("projection", orthoProjection);
+            spriteRenderer.DrawSprite(menue, glm::vec2(0.0f,0.0f), glm::vec2(settings.SCR_WIDTH, settings.SCR_HEIGHT), 180.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
-        animationShader.setMat4("model", player.GetModelMatrix(PLAYER_YAW_OFFSET));
-        glm::vec3 camPos = cameraOffset + player.objectPosition;
-        glm::mat4 view = camera.GetViewMatrix(camPos, player.objectPosition,camera.cameraUp);
-        animationShader.setMat4("view", view);
+            if (mainWindow.getsKeys()[GLFW_KEY_ENTER]) {
+              state = GameState::GAME_ACTIVE;
+            }
 
-
-
-        auto transforms = playerAnimator.GetFinalBoneMatrices();
-        for (int i = 0; i < transforms.size(); ++i)
-            animationShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
-
-        player.Draw(animationShader);
-
-        
-
-        // generate Enemies locations
-
-        if (currentFrame - lastEnemyFrame >= SPAWN_DELAY) {
-
-            std::cout << "spawn\n";
-            lastEnemyFrame = currentFrame;
-            Enemy enemy(spawnPosition(player.objectPosition), ENEMY_SCALE, ENEMY_SPEED);
-            enemy.LinkMesh(zombieModel);
-            enemies.push_back(enemy);
 
         }
 
+        else if (state == GameState::GAME_ACTIVE) {
 
-        //Render enemies
 
-     
-        for (int i = 0; i < enemies.size(); i++) {
-            glm::vec3  enemyCurrentPosition = enemies[i].Move(deltaTime, player.objectPosition);
-            animationShader.setMat4("model", enemies[i].GetModelMatrix(enemyCurrentPosition , ENEMY_YAW_OFFSET));
-            auto transforms = zombieAnimator.GetFinalBoneMatrices();
+            float currentFrame = static_cast<float>(glfwGetTime());
+            deltaTime = currentFrame - lastFrame;
+            lastFrame = currentFrame;
+
+
+
+            // input
+            // -----
+
+            player.ProcessKeyboard(mainWindow.getsKeys(), deltaTime);
+            player.ProcessMouseMovement(mainWindow.getXChange());
+
+            if (player.currentMovement == Object_Movement::FORWARD && player.lastMovement != player.currentMovement) {
+                playerAnimator.NewAnimation(&playerRunAnimation);
+
+
+            }
+            else if (player.currentMovement == Object_Movement::BACKWARD && player.lastMovement != player.currentMovement) {
+                playerAnimator.NewAnimation(&playerRunBackAnimation);
+
+
+            }
+
+
+            else if (player.currentMovement == Object_Movement::RIGHT && player.lastMovement != player.currentMovement) {
+                playerAnimator.NewAnimation(&playerRunRightAnimation);
+
+
+            }
+            else if (player.currentMovement == Object_Movement::LEFT && player.lastMovement != player.currentMovement) {
+                playerAnimator.NewAnimation(&playerRunLeftAnimation);
+
+            }
+
+            zombieAnimator.UpdateAnimation(deltaTime);
+            playerAnimator.UpdateAnimation(deltaTime);
+
+
+            animationShader.use();
+            animationShader.setBool("useLight", false);
+            animationShader.setMat4("projection", projection);
+
+            // render the Player model
+
+            animationShader.setMat4("model", player.GetModelMatrix(settings.PLAYER_YAW_OFFSET));
+            glm::vec3 camPos = cameraOffset + player.objectPosition;
+            glm::mat4 view = camera.GetViewMatrix(camPos, player.objectPosition, camera.cameraUp);
+            animationShader.setMat4("view", view);
+
+
+
+            auto transforms = playerAnimator.GetFinalBoneMatrices();
             for (int i = 0; i < transforms.size(); ++i)
                 animationShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 
-            enemies[i].Draw(animationShader);
+            player.Draw(animationShader);
+
+
+
+            // generate Enemies locations
+
+            if (currentFrame - lastEnemyFrame >= settings.SPAWN_DELAY) {
+
+                std::cout << "spawn\n";
+                lastEnemyFrame = currentFrame;
+                Enemy enemy(spawnPosition(player.objectPosition), settings.ENEMY_SCALE, settings.ENEMY_SPEED);
+                enemy.LinkMesh(zombieModel);
+                enemies.push_back(enemy);
+
+            }
+
+
+            //Render enemies
+
+
+            for (int i = 0; i < enemies.size(); i++) {
+                glm::vec3  enemyCurrentPosition = enemies[i].Move(deltaTime, player.objectPosition);
+                animationShader.setMat4("model", enemies[i].GetModelMatrix(enemyCurrentPosition, settings.ENEMY_YAW_OFFSET));
+
+
+                auto transforms = zombieAnimator.GetFinalBoneMatrices();
+                for (int i = 0; i < transforms.size(); ++i)
+                    animationShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+
+
+
+                enemies[i].Draw(animationShader);
+            }
+
+            shader.use();
+            shader.setBool("useLight", false);
+            shader.setMat4("projection", projection);
+            shader.setMat4("view", view);
+
+            //Environment
+
+            shader.setMat4("model", floor.GetModelMatrix());
+            floor.Draw(shader);
+
+
+            box.objectPosition = player.objectPosition;
+            box.yaw = player.yaw;
+            shader.setMat4("model", box.GetModelMatrix(
+                glm::vec3(
+                    player.boundingBox[0] + glm::abs(player.boundingBox[1]),
+                    player.boundingBox[2] + glm::abs(player.boundingBox[3]), 
+                    player.boundingBox[4] + glm::abs(player.boundingBox[5])
+                
+                ),0.0f));
+
+            //shader.setMat4("model", box.GetModelMatrix());
+            //box.Draw(shader);
+          
+            if (enemies.size() >= 1) {
+                box.objectPosition = enemies[0].objectPosition;
+                box.yaw = enemies[0].yaw;
+                shader.setMat4("model", box.GetModelMatrix(
+                    glm::vec3(
+                        enemies[0].boundingBox[0] + glm::abs(enemies[0].boundingBox[1]), 
+                        enemies[0].boundingBox[2] + glm::abs(enemies[0].boundingBox[3]), 
+                        enemies[0].boundingBox[4] + glm::abs(enemies[0].boundingBox[5])), 0.0f));
+                //shader.setMat4("model", box.GetModelMatrix());
+                //box.Draw(shader);
+               /* std::cout << "enemy\n";
+                std::cout << "x1:" << enemies[0].objectPosition.x + enemies[0].boundingBox[0] << "\n";
+                std::cout << "x2:" << enemies[0].objectPosition.x - glm::abs(enemies[0].boundingBox[1]) << "\n";
+
+                std::cout << "z1:" << enemies[0].objectPosition.z + enemies[0].boundingBox[4] << "\n";
+                std::cout << "z2:" << enemies[0].objectPosition.z - glm::abs(enemies[0].boundingBox[5]) << "\n";*/
+
+            }
+
+
+            if (mainWindow.mouseLeftClick) {
+                glm::vec3 bulletCurrentPos = glm::vec3(player.objectPosition.x + 0.01 * player.objectFront.x, 0.55f + player.objectPosition.y, player.objectPosition.z + 0.01 * player.objectFront.z);
+                Bullet bullet(bulletCurrentPos, settings.BULLET_SCALE, settings.BULLET_SPEED, player.yaw);
+                bullet.LinkMesh(bulletModel);
+                bullets.push_back(bullet);
+                mainWindow.mouseLeftClick = false;
+
+            }
+
+            //Check collisions
+
+            bulletHandler(bullets, enemies, shader, deltaTime);
+            playerCollisionCheck(player, enemies);
+            playerCollisionCheck(player, level.objects);
+
+            //Bounding box render
+
+            basicShader.use();
+            basicShader.setMat4("projection", projection);
+            basicShader.setMat4("view", view);
+            level.Draw(basicShader);
+
+            // 2D stuff
+
+            spriteShader.use();
+            spriteShader.setMat4("projection", orthoProjection);
+            glm::vec2 currentCursorPos = glm::vec2(player.objectPosition.x + player.objectFront.x * crosshairRadius + (float)settings.SCR_WIDTH / 2, player.objectPosition.z + player.objectFront.z * crosshairRadius + (float)settings.SCR_HEIGHT / 2);
+            glm::vec4 mod = view * glm::vec4(currentCursorPos.x, 0.0f, currentCursorPos.y, 1.0f);
+            spriteRenderer.DrawSprite(crosshair, glm::vec2(mod.x, mod.z), glm::vec2(30.0f, 30.0f), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+           /* std::cout << "player "<< player.objectPosition.y<<"\n";
+            std::cout << "x1:" << player.objectPosition.x + player.boundingBox[0] << "\n";
+            std::cout << "x2:" << player.objectPosition.x - glm::abs(player.boundingBox[1]) << "\n";
+
+            std::cout << "z1:" << player.objectPosition.z + player.boundingBox[4] << "\n";
+            std::cout << "z2:" << player.objectPosition.z - glm::abs(player.boundingBox[5]) << "\n";
+
+            std::cout << "y1:" << player.objectPosition.y + player.boundingBox[2] << "\n";
+            std::cout << "y2:" << player.objectPosition.y - glm::abs(player.boundingBox[3]) << "\n";*/
+
+
+
+
         }
-
-        shader.use();
-        shader.setBool("useLight", false);
-        shader.setMat4("projection", projection);
-        shader.setMat4("view", view);
-
-        //Environment
-
-        shader.setMat4("model", floor.GetModelMatrix());
-        floor.Draw(shader);
-
-        if (mainWindow.mouseLeftClick) {
-            glm::vec3 bulletCurrentPos = glm::vec3(player.objectPosition.x + 0.01 * player.objectFront.x, 0.55f + player.objectPosition.y, player.objectPosition.z + 0.01 * player.objectFront.z);
-            Bullet bullet(bulletCurrentPos, BULLET_SCALE, BULLET_SPEED, player.yaw);
-            bullet.LinkMesh(bulletModel);
-            bullets.push_back(bullet);
-            mainWindow.mouseLeftClick = false;
-
-        }
-
-        //Check collisions
-
-        bulletHandler(bullets, enemies, shader, deltaTime);
-        playerCollisionCheck(player, enemies);
-
-
-        // 2D stuff
-
-        spriteShader.use();
-        spriteShader.setMat4("projection", orthoProjection);
-        glm::vec2 currentCursorPos = glm::vec2(player.objectPosition.x + player.objectFront.x * crosshairRadius + (float)SCR_WIDTH / 2, player.objectPosition.z + player.objectFront.z * crosshairRadius + (float)SCR_HEIGHT / 2);
-        glm::vec4 mod = view*glm::vec4(currentCursorPos.x, 0.0f, currentCursorPos.y, 1.0f);
-        spriteRenderer.DrawSprite(crosshair, glm::vec2(mod.x, mod.z), glm::vec2(30.0f, 30.0f), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-       
-
-
         // -------------------------------------------------------------------------------
         mainWindow.swapBuffers();
         glfwPollEvents();
@@ -301,7 +384,22 @@ void playerCollisionCheck(Player player, vector<Enemy>& objects) {
     for (int j = 0; j < (int)objects.size(); j++) {
 
         if (player.CheckCollision(objects[j])) {
-            //std::cout << "Game over\n";
+            std::cout << "collision\n";
+            //state = GameState::GAME_MENU;
+            break;
+        }
+    }
+
+}
+
+void playerCollisionCheck(Player player, vector<GameObject>& objects) {
+
+
+    for (int j = 0; j < (int)objects.size(); j++) {
+
+        if (player.CheckCollision(objects[j])) {
+            std::cout << "collision\n";
+            //state = GameState::GAME_MENU;
             break;
         }
     }
@@ -313,9 +411,9 @@ glm::vec3 spawnPosition(glm::vec3 playerPosition) {
     srand(time(0));
 
 
-    float randomX = (rand() % static_cast<int>( 2* SPAWN_RADIUS_MAX)) + playerPosition.x;
-    float randomZ = (rand() % static_cast<int>( 2 * SPAWN_RADIUS_MAX)) + playerPosition.z;
+    float randomX = (rand() % static_cast<int>( 2* settings.SPAWN_RADIUS_MAX)) + playerPosition.x;
+    float randomZ = (rand() % static_cast<int>( 2 * settings.SPAWN_RADIUS_MAX)) + playerPosition.z;
     float sign = -1 + (rand() % static_cast<int>(3));
-    return glm::vec3(sign*randomX + playerPosition.x + SPAWN_RADIUS_MIN, playerPosition.y, sign* randomZ+ playerPosition.z + SPAWN_RADIUS_MIN);
+    return glm::vec3(sign*randomX + playerPosition.x + settings.SPAWN_RADIUS_MIN, playerPosition.y, sign* randomZ+ playerPosition.z + settings.SPAWN_RADIUS_MIN);
 
 }

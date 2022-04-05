@@ -88,7 +88,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLM;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLAD\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\STB;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLM;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLAD\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\STB;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\JSON;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -105,7 +105,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLM;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLAD\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\STB;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLM;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLAD\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\STB;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\JSON;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -122,7 +122,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLM;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLAD\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\STB;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLM;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLAD\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\STB;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\JSON;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,7 +139,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLM;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLAD\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\STB;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLM;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLAD\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\STB;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\JSON;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -156,6 +156,8 @@
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameLevel.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -174,10 +176,13 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="FileSystem.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="GameLevel.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Settings.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SpriteRenderer.h" />
     <ClInclude Include="Texture.h" />

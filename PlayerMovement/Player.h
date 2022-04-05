@@ -9,6 +9,7 @@
 
 #include"GameObject.h"
 #include "Enemy.h"
+#include "Settings.h"
 
 //enum class Player_Movement {
 //    FORWARD,
@@ -19,12 +20,6 @@
 //};
 
 // Default values
-const float PLAYER_YAW = 0.0f;
-const float PLAYER_SPEED = 2.5f;
-const float PLAYER_JUMP_SPEED = 5.0f;
-const float PLAYER_TURNSPEED = 2.5f;
-const float PLAYER_SENSITIVITY = 0.1f;
-
 const float GRAVITY = -10.0f;
 
 
@@ -36,7 +31,7 @@ public:
 
 
     // constructor with vectors
-    Player(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = PLAYER_YAW, float size = 1.0f);
+    Player(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = 0.0f, float size = 1.0f);
     
     glm::mat4 GetModelMatrix();
 
@@ -52,6 +47,8 @@ public:
     void updatePlayerVectors();
 
     bool CheckCollision(Enemy& obj);
+
+    bool CheckCollision(GameObject& obj);
 
 };
 

@@ -13,7 +13,7 @@
 #include <vector>
 #include<iostream>
 
-const float BULLET_DIE_DISTANCE = 10.0f;
+//const float BULLET_DIE_DISTANCE = 10.0f;
 
 class Bullet : public GameObject
 {

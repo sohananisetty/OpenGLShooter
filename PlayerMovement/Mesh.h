@@ -42,6 +42,8 @@ public:
 
     // constructor
     Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture2D> textures);
+    Mesh(vector<Vertex> vertices, vector<unsigned int> indices);
+
 
     // render the mesh
     void Draw(Shader& shader);

@@ -1,43 +1,31 @@
 #include "GameObject.h"
 
 
-GameObject::GameObject(): objectPosition(0.0f, 0.0f , 0.0f), worldUp(0.0f,1.0f,0.0f), objectSize(0.0f), objectSpeed(0.0f), yaw(0.0f), pitch(0.0f), destroyed(false) 
+GameObject::GameObject(): objectPosition(0.0f, 0.0f , 0.0f), worldUp(0.0f,1.0f,0.0f), objectSize(glm::vec3(0.0f)), objectColor(glm::vec3(1.0f)), objectSpeed(0.0f), yaw(0.0f), pitch(0.0f), destroyed(false)
 {
-
     boundingBox = { 0.0f, 0.0f, 0.0f,0.0f,0.0f,0.0f };
     calcObjectVectors(yaw, pitch);
 }
 
-GameObject::GameObject(glm::vec3 position, float size, glm::vec3 worldUp, float yaw, float pitch,  float speed, bool dest)
-    : objectPosition(position), worldUp(worldUp), objectSize(size), objectSpeed(speed), yaw(yaw), pitch(pitch), destroyed(dest)
+GameObject::GameObject(glm::vec3 position, glm::vec3 size, glm::vec3 worldUp, float yaw, float pitch,  float speed, bool dest)
+    : objectPosition(position), worldUp(worldUp), objectSize(size), objectColor(glm::vec3(1.0f)),objectSpeed( speed), yaw(yaw), pitch(pitch), destroyed(dest)
 {
     boundingBox = { 0.0f, 0.0f, 0.0f,0.0f,0.0f,0.0f };
     calcObjectVectors(this->yaw, this->pitch);
 
-}
 
-//GameObject::GameObject(glm::vec3 position, glm::vec3 worldUp, glm::vec3 objectFront, float size, float speed, bool dest)
-//{
-//    this->objectPosition = position;
-//    this->worldUp = worldUp;
-//    this->yaw = yaw;
-//    this->pitch = pitch;
-//    this->objectSize = size;
-//    this->objectSpeed = speed;
-//    this->destroyed = dest;
-//
-//    calcObjectVectors(yaw, pitch);
-//
-//}
+}
 
 
 void GameObject::LinkMesh(Model model)
 {
     this->model = model;
-    for (int i = 0; i < model.boundingBox.size(); i++) {
-        this->boundingBox[i] = model.boundingBox[i] * objectSize;
+    float k = 0;
+    for (int i = 0; i < model.boundingBox.size(); i++ , k+=0.5) {
+        this->boundingBox[i] = model.boundingBox[i] * objectSize[(int)floor(k)];
     }
-        
+
+
 }
 
 void GameObject::Draw(Shader& shader)
@@ -53,6 +41,18 @@ glm::mat4 GameObject::GetModelMatrix()
 
     return model;
 }
+
+glm::mat4 GameObject::GetModelMatrix(glm::vec3 scale , float yawOffset)
+{
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, this->objectPosition);
+    model = glm::rotate(model, glm::radians(this->yaw + yawOffset), this->objectUp);
+    model = glm::scale(model, scale);
+
+    return model;
+}
+
+
 
 void GameObject::calcObjectVectors(float yaw, float pitch)
 {
@@ -86,8 +86,8 @@ bool GameObject::CheckCollision(GameObject& obj)
     bool collisionX = this->objectPosition.x + this->boundingBox[0] >= obj.objectPosition.x - glm::abs(obj.boundingBox[1]) &&
         this->objectPosition.x - glm::abs(this->boundingBox[1]) <= obj.objectPosition.x + glm::abs(obj.boundingBox[0]);
     // collision y-axis?
-    bool collisionY = this->objectPosition.z + this->boundingBox[2] >= obj.objectPosition.z - glm::abs(obj.boundingBox[3]) &&
-        this->objectPosition.z - glm::abs(this->boundingBox[3]) <= obj.objectPosition.z + glm::abs(obj.boundingBox[2]);
+    bool collisionY = this->objectPosition.z + this->boundingBox[4] >= obj.objectPosition.z - glm::abs(obj.boundingBox[5]) &&
+        this->objectPosition.z - glm::abs(this->boundingBox[4]) <= obj.objectPosition.z + glm::abs(obj.boundingBox[5]);
     // collision only if on both axes
     return collisionX && collisionY;
 }

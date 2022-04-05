@@ -7,7 +7,7 @@
 //GameObject(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = 0.0f, float pitch = 0.0f, float size = 1.0f, float speed = 1.0f, bool dest = false);
 //
 Bullet::Bullet(glm::vec3 position, float radius, float speed, float yaw)
-	:GameObject(position, radius, glm::vec3(0.0f,1.0f,0.0f), yaw, 0.0f, speed,false)
+	:GameObject(position, glm::vec3(radius), glm::vec3(0.0f,1.0f,0.0f), yaw, 0.0f, speed,false)
 {
 	this->bulletStartPosition = position;
 }
@@ -19,7 +19,7 @@ glm::vec3 Bullet::Move(float dt)
 
 		float distance = glm::length(this->bulletStartPosition - this->objectPosition);
 
-		if (distance >= BULLET_DIE_DISTANCE)
+		if (distance >= this->settings.BULLET_DIE_DISTANCE)
 		{
 			this->destroyed = true;
 		}

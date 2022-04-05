@@ -2,8 +2,9 @@
 
 
 Player::Player(glm::vec3 position, glm::vec3 up, float yaw, float size) :
-    GameObject(position,size,up,yaw,0.0f,PLAYER_SPEED,false) , PlayerMouseSensitivity(PLAYER_SENSITIVITY), PlayerTurnSpeed(PLAYER_TURNSPEED), currentUpSpeed(0.0f), PlayerJumpSpeed(PLAYER_JUMP_SPEED)
+    GameObject(position,glm::vec3(size),up,yaw,0.0f,settings.PLAYER_SPEED,false) , PlayerMouseSensitivity(settings.PLAYER_SENSITIVITY), PlayerTurnSpeed(settings.PLAYER_TURNSPEED), currentUpSpeed(0.0f), PlayerJumpSpeed(settings.PLAYER_JUMP_SPEED)
 {
+    this->objectSpeed = settings.PLAYER_SPEED;
     //updatePlayerVectors();
 }
 
@@ -21,7 +22,7 @@ glm::mat4 Player::GetModelMatrix()
 glm::mat4 Player::GetModelMatrix(float yawOffset)
 {
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, objectPosition);
+    model = glm::translate(model, this->objectPosition);
     model = glm::rotate(model, glm::radians(this->yaw + yawOffset), this->objectUp);
     model = glm::scale(model, glm::vec3(this->objectSize));
 
@@ -31,7 +32,7 @@ glm::mat4 Player::GetModelMatrix(float yawOffset)
 
 void Player::ProcessKeyboard(bool* keys, float deltaTime)
 {
-    float distance = objectSpeed * deltaTime;
+    float distance = this->objectSpeed * deltaTime;
     currentUpSpeed += GRAVITY * deltaTime;
     glm::vec3 currentPos = this->objectPosition;
 
@@ -45,9 +46,9 @@ void Player::ProcessKeyboard(bool* keys, float deltaTime)
     this->lastMovement = currentMovement;
 
     if (keys[GLFW_KEY_W]) {
+        std::cout << "Player speed: " << this->objectSpeed << "\n";
         objectPosition += objectFront * distance;
         this->currentMovement = Object_Movement::FORWARD;
-        std::cout << "for\n";
 
         /*for (int j = 0; j < (int)objects.size(); j++) {
             if (this->CheckCollision(objects[j])) {
@@ -165,8 +166,20 @@ bool Player::CheckCollision(Enemy& obj)
     bool collisionX = this->objectPosition.x + this->boundingBox[0] >= obj.objectPosition.x - glm::abs(obj.boundingBox[1]) &&
         this->objectPosition.x - glm::abs(this->boundingBox[1]) <= obj.objectPosition.x + glm::abs(obj.boundingBox[0]);
     // collision y-axis?
-    bool collisionY = this->objectPosition.z + this->boundingBox[2] >= obj.objectPosition.z - glm::abs(obj.boundingBox[3]) &&
-        this->objectPosition.z - glm::abs(this->boundingBox[3]) <= obj.objectPosition.z + glm::abs(obj.boundingBox[2]);
+    bool collisionY = this->objectPosition.z + this->boundingBox[4] >= obj.objectPosition.z - glm::abs(obj.boundingBox[5]) &&
+        this->objectPosition.z - glm::abs(this->boundingBox[4]) <= obj.objectPosition.z + glm::abs(obj.boundingBox[5]);
+    // collision only if on both axes
+    return collisionX && collisionY;
+}
+
+bool Player::CheckCollision(GameObject& obj)
+{
+    // collision x-axis?
+    bool collisionX = this->objectPosition.x + this->boundingBox[0] >= obj.objectPosition.x - glm::abs(obj.boundingBox[1]) &&
+        this->objectPosition.x - glm::abs(this->boundingBox[1]) <= obj.objectPosition.x + glm::abs(obj.boundingBox[0]);
+    // collision y-axis?
+    bool collisionY = this->objectPosition.z + this->boundingBox[4] >= obj.objectPosition.z - glm::abs(obj.boundingBox[5]) &&
+        this->objectPosition.z - glm::abs(this->boundingBox[4]) <= obj.objectPosition.z + glm::abs(obj.boundingBox[5]);
     // collision only if on both axes
     return collisionX && collisionY;
 }

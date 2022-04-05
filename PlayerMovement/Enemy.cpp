@@ -2,7 +2,7 @@
 
 
 Enemy::Enemy(glm::vec3 position, float size, float speed)
-	:GameObject(position, size, glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.0f, speed, false)
+	:GameObject(position, glm::vec3(size), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.0f, speed, false)
 {
 }
 
