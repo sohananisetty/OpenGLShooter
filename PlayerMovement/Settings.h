@@ -79,10 +79,10 @@ public:
 		 SPAWN_RADIUS_MAX = settings["SPAWN_RADIUS_MAX"].get<float>();
 		 SPAWN_RADIUS_MIN = settings["SPAWN_RADIUS_MIN"].get<float>();
 		 SPAWN_DELAY = settings["SPAWN_DELAY"].get<float>();
-		 BULLET_SPEED = settings["ENEMY_YAW_OFFSET"].get<float>();
+		 ENEMY_YAW_OFFSET = settings["ENEMY_YAW_OFFSET"].get<float>();
 
-		 BULLET_SPEED = settings["TERRAIN_HEIGHT"].get<float>();
-		 BULLET_SPEED = settings["TERRAIN_SCALE"].get<float>();
+		 TERRAIN_HEIGHT = settings["TERRAIN_HEIGHT"].get<float>();
+		 TERRAIN_SCALE = settings["TERRAIN_SCALE"].get<float>();
 
 
 

@@ -46,29 +46,16 @@ void Player::ProcessKeyboard(bool* keys, float deltaTime)
     this->lastMovement = currentMovement;
 
     if (keys[GLFW_KEY_W]) {
-        std::cout << "Player speed: " << this->objectSpeed << "\n";
+       // std::cout << "Player speed: " << this->objectSpeed << "\n";
         objectPosition += objectFront * distance;
         this->currentMovement = Object_Movement::FORWARD;
 
-        /*for (int j = 0; j < (int)objects.size(); j++) {
-            if (this->CheckCollision(objects[j])) {
-                objectPosition = currentPos;
-
-            }
-        }*/
     }
 
     if (keys[GLFW_KEY_S]) {
 
         objectPosition -= objectFront * distance;
         this->currentMovement = Object_Movement::BACKWARD;
-
-        /*for (int j = 0; j < (int)objects.size(); j++) {
-            if (this->CheckCollision(objects[j])) {
-                objectPosition = currentPos;
-
-            }
-        }*/
     }
 
     if (keys[GLFW_KEY_A]) {
@@ -76,12 +63,7 @@ void Player::ProcessKeyboard(bool* keys, float deltaTime)
         objectPosition -= objectRight * distance;
         this->currentMovement = Object_Movement::LEFT;
 
-        /*for (int j = 0; j < (int)objects.size(); j++) {
-            if (this->CheckCollision(objects[j])) {
-                objectPosition = currentPos;
-
-            }
-        }*/
+     
     }
 
     if (keys[GLFW_KEY_D]) {
@@ -89,12 +71,6 @@ void Player::ProcessKeyboard(bool* keys, float deltaTime)
         objectPosition += objectRight * distance;
         this->currentMovement = Object_Movement::RIGHT;
 
-        /*for (int j = 0; j < (int)objects.size(); j++) {
-            if (this->CheckCollision(objects[j])) {
-                objectPosition = currentPos;
-
-            }
-        }*/
     }
     if (keys[GLFW_KEY_SPACE]) {
 
@@ -104,15 +80,12 @@ void Player::ProcessKeyboard(bool* keys, float deltaTime)
 
     }
 
-    /*else
+    else if(!keys[GLFW_KEY_W] && !keys[GLFW_KEY_S] && !keys[GLFW_KEY_A] && !keys[GLFW_KEY_D] && !keys[GLFW_KEY_SPACE])
     {
-        std::cout << "still\n";
 
         this->currentMovement = Object_Movement::STILL;
 
-    }*/
-
-    
+    }
 
 
 
@@ -174,12 +147,17 @@ bool Player::CheckCollision(Enemy& obj)
 
 bool Player::CheckCollision(GameObject& obj)
 {
+    bool x1 = this->objectPosition.x + this->boundingBox[0] >= obj.objectPosition.x - glm::abs(obj.boundingBox[1]);
+    bool x2 = this->objectPosition.x - glm::abs(this->boundingBox[1]) <= obj.objectPosition.x + glm::abs(obj.boundingBox[0]);
+
+    bool y1 = this->objectPosition.z + this->boundingBox[4] >= obj.objectPosition.z - glm::abs(obj.boundingBox[5]);
+    bool y2 = this->objectPosition.z - glm::abs(this->boundingBox[4]) <= obj.objectPosition.z + glm::abs(obj.boundingBox[5]);
     // collision x-axis?
-    bool collisionX = this->objectPosition.x + this->boundingBox[0] >= obj.objectPosition.x - glm::abs(obj.boundingBox[1]) &&
-        this->objectPosition.x - glm::abs(this->boundingBox[1]) <= obj.objectPosition.x + glm::abs(obj.boundingBox[0]);
+    bool collisionX = x1 && x2;
     // collision y-axis?
-    bool collisionY = this->objectPosition.z + this->boundingBox[4] >= obj.objectPosition.z - glm::abs(obj.boundingBox[5]) &&
-        this->objectPosition.z - glm::abs(this->boundingBox[4]) <= obj.objectPosition.z + glm::abs(obj.boundingBox[5]);
+    bool collisionY = y1 && y2;
+
+
     // collision only if on both axes
     return collisionX && collisionY;
 }

@@ -1,20 +1,24 @@
 {
 	"1" : {
 		"path" :"C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/box/box.obj",
-		"position" : [1.0,0.0,1.0],
+		"position" : [-3.0,0.0,0.0],
 		"scale" : [1.0,1.0,1.0],
-		"color" : [1.0,0.0,0.0]
+		"color" : [1.0,0.34,0.2],
+		"useTex" : false
 		},
 	"2" : {
 		"path" :"C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/box/box.obj",
-		"position" : [10.0,0.0,1.5],
+		"position" : [0.0,0.0,1.5],
 		"scale" : [1.0,1.0,1.0],
-		"color" : [0.0,1.0,0.0]
+		"color" : [0.855,0.97,0.65],
+		"useTex" : false
 		},
 	"3" : {
 		"path" :"C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/box/box.obj",
-		"position" : [5.0,0.0,1.0],
+		"position" : [3.0,0.0,0.0],
 		"scale" : [1.0,1.0,1.0],
-		"color" : [0.0,0.0,1.0]
+		"color" : [0.345,0.094,0.27],
+		"useTex" : false
 		}
+
 }

@@ -24,7 +24,7 @@ void main()
 
     TexCoords = aTexCoords; 
 
-    surfaceNormal = (model* vec4(aNormal,0.0)).xyz;
+    surfaceNormal = mat3(transpose(inverse(model))) * aNormal;  
     toLightVector = lightPosition - worldPosition.xyz;
     toCameraVector = (inverse(view) * vec4(0.0,0.0,0.0,1.0)).xyz - worldPosition.xyz;
 	

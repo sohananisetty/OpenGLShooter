@@ -3,12 +3,12 @@
 
 void Model::loadModel(string const& path)
 {
-    std::cout << "in importer\n";
+    //std::cout << "in importer\n";
     // read file via ASSIMP
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
     // check for errors
-    std::cout << "after importer\n";
+    //std::cout << "after importer\n";
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
     {
@@ -19,7 +19,7 @@ void Model::loadModel(string const& path)
     // retrieve the directory path of the filepath
     directory = path.substr(0, path.find_last_of('/'));
     
-    std::cout << path << "\n";
+    //std::cout << path << "\n";
 
     // process ASSIMP's root node recursively
     processNode(scene->mRootNode, scene);
@@ -164,7 +164,7 @@ vector<Texture2D> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType typ
             
             // if texture hasn't been loaded already, load it
             if (auto textureEmbedded = scene->GetEmbeddedTexture(str.C_Str())) {
-                std::cout << "embedded textures\n";
+                //std::cout << "embedded textures\n";
                 Texture2D texture(textureEmbedded, false);
                 texture.type = typeName;
                 textures.push_back(texture);

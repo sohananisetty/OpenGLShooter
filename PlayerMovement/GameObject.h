@@ -43,7 +43,7 @@ public:
     glm::vec3 objectSize;
     glm::vec3 objectColor;
     bool  destroyed;
-
+    bool useTex = true;
     unsigned int VBO, VAO, EBO;
 
     // constructor(s)

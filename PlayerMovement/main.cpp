@@ -26,7 +26,7 @@
 
 void bulletHandler(vector<Bullet>& bullets, vector<Enemy>&objects , Shader shader, float deltaTime);
 void playerCollisionCheck(Player player, vector<Enemy>& objects);
-void playerCollisionCheck(Player player, vector<GameObject>& objects);
+void playerCollisionCheck(Player &player, vector<GameObject>& objects , float deltaTime);
 glm::vec3 spawnPosition(glm::vec3 playerPosition);
 
 Settings settings;
@@ -57,6 +57,8 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 float lastEnemyFrame = 1.0f;
 
+glm::vec3 lightPosition = glm::vec3(0.0, 10.0, 0.0);
+glm::vec3 lightColour = glm::vec3(1.0, 1.0, 1.0);
 
 float crosshairRadius = 300.0f;
 
@@ -72,7 +74,7 @@ int main()
 
     // build and compile shaders
     // -------------------------
-    Shader basicShader("Shaders/basic_vertex_shader.vs", "Shaders/basic_fragment_shader.fs");
+    Shader basicShader("Shaders/vertex_shader.vs", "Shaders/basic_fragment_shader.fs");
     Shader shader("Shaders/vertex_shader.vs", "Shaders/fragment_shader.fs");
     Shader animationShader("Shaders/vertex_shader_animation.vs", "Shaders/fragment_shader_animation.fs");
 
@@ -150,8 +152,6 @@ int main()
             if (mainWindow.getsKeys()[GLFW_KEY_ENTER]) {
               state = GameState::GAME_ACTIVE;
             }
-
-
         }
 
         else if (state == GameState::GAME_ACTIVE) {
@@ -169,6 +169,9 @@ int main()
             player.ProcessKeyboard(mainWindow.getsKeys(), deltaTime);
             player.ProcessMouseMovement(mainWindow.getXChange());
 
+            playerCollisionCheck(player, enemies);
+            playerCollisionCheck(player, level.objects, deltaTime);
+
             if (player.currentMovement == Object_Movement::FORWARD && player.lastMovement != player.currentMovement) {
                 playerAnimator.NewAnimation(&playerRunAnimation);
 
@@ -179,8 +182,6 @@ int main()
 
 
             }
-
-
             else if (player.currentMovement == Object_Movement::RIGHT && player.lastMovement != player.currentMovement) {
                 playerAnimator.NewAnimation(&playerRunRightAnimation);
 
@@ -190,6 +191,10 @@ int main()
                 playerAnimator.NewAnimation(&playerRunLeftAnimation);
 
             }
+            //else if (player.currentMovement == Object_Movement::STILL && player.lastMovement == Object_Movement::STILL) {
+            //    playerAnimator.NewAnimation(&playerIdleAnimation);
+
+            //}
 
             zombieAnimator.UpdateAnimation(deltaTime);
             playerAnimator.UpdateAnimation(deltaTime);
@@ -220,7 +225,7 @@ int main()
 
             if (currentFrame - lastEnemyFrame >= settings.SPAWN_DELAY) {
 
-                std::cout << "spawn\n";
+                //std::cout << "spawn\n";
                 lastEnemyFrame = currentFrame;
                 Enemy enemy(spawnPosition(player.objectPosition), settings.ENEMY_SCALE, settings.ENEMY_SPEED);
                 enemy.LinkMesh(zombieModel);
@@ -247,51 +252,56 @@ int main()
             }
 
             shader.use();
-            shader.setBool("useLight", false);
             shader.setMat4("projection", projection);
             shader.setMat4("view", view);
 
+            shader.setVec3("lightPosition", glm::vec3(camera.cameraPosition.x, camera.cameraPosition.y + 10.0f, camera.cameraPosition.z - 10.0f));
+            shader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+            shader.setVec3("light.diffuse", 0.8f, 0.8f, 0.8f); 
+            shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+            shader.setBool("useTex", true);
             //Environment
 
             shader.setMat4("model", floor.GetModelMatrix());
             floor.Draw(shader);
 
 
-            box.objectPosition = player.objectPosition;
-            box.yaw = player.yaw;
-            shader.setMat4("model", box.GetModelMatrix(
-                glm::vec3(
-                    player.boundingBox[0] + glm::abs(player.boundingBox[1]),
-                    player.boundingBox[2] + glm::abs(player.boundingBox[3]), 
-                    player.boundingBox[4] + glm::abs(player.boundingBox[5])
-                
-                ),0.0f));
+
+            //box.objectPosition = player.objectPosition;
+            //box.yaw = player.yaw;
+            //shader.setMat4("model", box.GetModelMatrix(
+            //    glm::vec3(
+            //        player.boundingBox[0] + glm::abs(player.boundingBox[1]),
+            //        player.boundingBox[2] + glm::abs(player.boundingBox[3]), 
+            //        player.boundingBox[4] + glm::abs(player.boundingBox[5])
+            //    
+            //    ),0.0f));
 
             //shader.setMat4("model", box.GetModelMatrix());
             //box.Draw(shader);
           
-            if (enemies.size() >= 1) {
-                box.objectPosition = enemies[0].objectPosition;
-                box.yaw = enemies[0].yaw;
-                shader.setMat4("model", box.GetModelMatrix(
-                    glm::vec3(
-                        enemies[0].boundingBox[0] + glm::abs(enemies[0].boundingBox[1]), 
-                        enemies[0].boundingBox[2] + glm::abs(enemies[0].boundingBox[3]), 
-                        enemies[0].boundingBox[4] + glm::abs(enemies[0].boundingBox[5])), 0.0f));
-                //shader.setMat4("model", box.GetModelMatrix());
-                //box.Draw(shader);
-               /* std::cout << "enemy\n";
-                std::cout << "x1:" << enemies[0].objectPosition.x + enemies[0].boundingBox[0] << "\n";
-                std::cout << "x2:" << enemies[0].objectPosition.x - glm::abs(enemies[0].boundingBox[1]) << "\n";
+            //if (enemies.size() >= 1) {
+            //    box.objectPosition = enemies[0].objectPosition;
+            //    box.yaw = enemies[0].yaw;
+            //    shader.setMat4("model", box.GetModelMatrix(
+            //        glm::vec3(
+            //            enemies[0].boundingBox[0] + glm::abs(enemies[0].boundingBox[1]), 
+            //            enemies[0].boundingBox[2] + glm::abs(enemies[0].boundingBox[3]), 
+            //            enemies[0].boundingBox[4] + glm::abs(enemies[0].boundingBox[5])), 0.0f));
+            //    //shader.setMat4("model", box.GetModelMatrix());
+            //    //box.Draw(shader);
+            //   /* std::cout << "enemy\n";
+            //    std::cout << "x1:" << enemies[0].objectPosition.x + enemies[0].boundingBox[0] << "\n";
+            //    std::cout << "x2:" << enemies[0].objectPosition.x - glm::abs(enemies[0].boundingBox[1]) << "\n";
 
-                std::cout << "z1:" << enemies[0].objectPosition.z + enemies[0].boundingBox[4] << "\n";
-                std::cout << "z2:" << enemies[0].objectPosition.z - glm::abs(enemies[0].boundingBox[5]) << "\n";*/
+            //    std::cout << "z1:" << enemies[0].objectPosition.z + enemies[0].boundingBox[4] << "\n";
+            //    std::cout << "z2:" << enemies[0].objectPosition.z - glm::abs(enemies[0].boundingBox[5]) << "\n";*/
 
-            }
+            //}
 
 
             if (mainWindow.mouseLeftClick) {
-                glm::vec3 bulletCurrentPos = glm::vec3(player.objectPosition.x + 0.01 * player.objectFront.x, 0.55f + player.objectPosition.y, player.objectPosition.z + 0.01 * player.objectFront.z);
+                glm::vec3 bulletCurrentPos = glm::vec3(player.objectPosition.x, 0.55f + player.objectPosition.y, player.objectPosition.z );
                 Bullet bullet(bulletCurrentPos, settings.BULLET_SCALE, settings.BULLET_SPEED, player.yaw);
                 bullet.LinkMesh(bulletModel);
                 bullets.push_back(bullet);
@@ -302,15 +312,23 @@ int main()
             //Check collisions
 
             bulletHandler(bullets, enemies, shader, deltaTime);
-            playerCollisionCheck(player, enemies);
-            playerCollisionCheck(player, level.objects);
+            
+            level.Draw(shader);
 
-            //Bounding box render
 
-            basicShader.use();
-            basicShader.setMat4("projection", projection);
-            basicShader.setMat4("view", view);
-            level.Draw(basicShader);
+            //Render Level
+
+            //basicShader.use();
+            //basicShader.setMat4("projection", projection);
+            //basicShader.setMat4("view", view);
+            //basicShader.setVec3("lightPosition" , glm::vec3(camera.cameraPosition.x , camera.cameraPosition.y + 10.0f, camera.cameraPosition.z - 10.0f));
+            //basicShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+            //basicShader.setVec3("light.diffuse", 0.8f, 0.8f, 0.8f); // darken diffuse light a bit
+            //basicShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+            //basicShader.setFloat("shininess", 12.0f);
+            //basicShader.setFloat("reflectivity", 0.5f);
+
+            //level.Draw(basicShader);
 
             // 2D stuff
 
@@ -350,7 +368,7 @@ void bulletHandler(vector<Bullet>& bullets, vector<Enemy>& objects , Shader shad
         for (int j = 0; j < (int)objects.size(); j++) {
 
             if (bullets[i].CheckCollision(objects[j])) {
-                std::cout << "collision\n";
+                std::cout << "bullet collision\n";
                 bullets[i].destroyed = true;
                 objects[j].destroyed = true;
                 objects.erase(objects.begin() + j);
@@ -392,13 +410,27 @@ void playerCollisionCheck(Player player, vector<Enemy>& objects) {
 
 }
 
-void playerCollisionCheck(Player player, vector<GameObject>& objects) {
+void playerCollisionCheck(Player &player, vector<GameObject>& objects , float deltaTime) {
 
 
     for (int j = 0; j < (int)objects.size(); j++) {
 
         if (player.CheckCollision(objects[j])) {
             std::cout << "collision\n";
+            float distance = player.objectSpeed * deltaTime;
+
+            if(player.lastMovement == Object_Movement::FORWARD)
+                player.objectPosition -= player.objectFront * distance;
+
+            else if (player.lastMovement == Object_Movement::BACKWARD)
+                player.objectPosition += player.objectFront * distance;
+
+            else if (player.lastMovement == Object_Movement::LEFT)
+                player.objectPosition += player.objectRight * distance;
+
+            else if (player.lastMovement == Object_Movement::RIGHT)
+                player.objectPosition -= player.objectRight * distance;
+
             //state = GameState::GAME_MENU;
             break;
         }

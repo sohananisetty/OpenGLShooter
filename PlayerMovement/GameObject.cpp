@@ -30,6 +30,7 @@ void GameObject::LinkMesh(Model model)
 
 void GameObject::Draw(Shader& shader)
 {
+    
     this->model.Draw(shader);
 }
 
