@@ -152,6 +152,10 @@ bool Player::CheckCollision(GameObject& obj)
 
     bool y1 = this->objectPosition.z + this->boundingBox[4] >= obj.objectPosition.z - glm::abs(obj.boundingBox[5]);
     bool y2 = this->objectPosition.z - glm::abs(this->boundingBox[4]) <= obj.objectPosition.z + glm::abs(obj.boundingBox[5]);
+
+//    bool z1 = this->objectPosition.y + this->boundingBox[2] <= obj.objectPosition.y - glm::abs(obj.boundingBox[5]);
+    bool z2 = this->objectPosition.y - glm::abs(this->boundingBox[3]) <= obj.objectPosition.y + glm::abs(obj.boundingBox[2]);
+
     // collision x-axis?
     bool collisionX = x1 && x2;
     // collision y-axis?
@@ -159,5 +163,5 @@ bool Player::CheckCollision(GameObject& obj)
 
 
     // collision only if on both axes
-    return collisionX && collisionY;
+    return collisionX && collisionY &&z2;
 }

@@ -88,13 +88,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLM;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLAD\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\STB;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\JSON;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLM;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLAD\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\STB;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\JSON;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\FREETYPE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\lib-vc2022;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\lib-vc2022;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\lib;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\FREETYPE\release static\vs2015-2022\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;assimp-vc143-mtd.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -105,15 +105,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLM;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLAD\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\STB;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\JSON;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLM;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLAD\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\STB;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\JSON;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\FREETYPE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\lib-vc2022;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\lib-vc2022;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\lib;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\FREETYPE\release static\vs2015-2022\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;assimp-vc143-mtd.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -122,13 +122,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLM;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLAD\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\STB;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\JSON;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLM;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLAD\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\STB;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\JSON;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\FREETYPE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\lib-vc2022;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\lib-vc2022;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\lib;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\FREETYPE\release static\vs2015-2022\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;assimp-vc143-mtd.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -139,15 +139,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLM;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLAD\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\STB;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\JSON;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLM;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLAD\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\include;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\STB;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\JSON;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\FREETYPE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\lib-vc2022;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\GLFW\lib-vc2022;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\ASSIMP\lib;C:\Users\abc\Documents\Visual Studio 2022\Projects\PlayerMovement\ExternalLib\FREETYPE\release static\vs2015-2022\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;assimp-vc143-mtd.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -164,6 +164,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SpriteRenderer.cpp" />
+    <ClCompile Include="TextRenderer.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
@@ -185,6 +186,7 @@
     <ClInclude Include="Settings.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SpriteRenderer.h" />
+    <ClInclude Include="TextRenderer.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
