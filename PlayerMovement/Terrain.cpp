@@ -1,6 +1,4 @@
 #include "Terrain.h"
-#include<iostream>
-#include<cmath>
 
 
 

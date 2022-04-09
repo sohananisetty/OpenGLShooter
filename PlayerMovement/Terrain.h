@@ -2,6 +2,8 @@
 #include "Mesh.h"
 
 #include<vector>
+#include<iostream>
+#include<cmath>
 
 class Terrain
 {

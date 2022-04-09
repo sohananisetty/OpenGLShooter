@@ -34,6 +34,7 @@ public:
     // shader used for text rendering
     Shader TextShader;
     // constructor
+    TextRenderer() {};
     TextRenderer(Shader &shader, glm::mat4 projection);
     // pre-compiles a list of characters from the given font
     void Load(std::string font, unsigned int fontSize);

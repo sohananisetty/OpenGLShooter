@@ -11,6 +11,8 @@ class Animator
 {
 public:
 
+	Animator() {};
+
 	Animator(Animation* animation)
 	{
 		m_CurrentTime = 0.0;

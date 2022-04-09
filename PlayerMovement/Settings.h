@@ -42,7 +42,12 @@ public:
 	 float TERRAIN_HEIGHT = 0.0f;
 	 float TERRAIN_SCALE = 40.0f;
 	 int TERRAIN_TILLING = 40;
+	 glm::vec3 DIRECTIONAL_LIGHT = glm::vec3(0, -1, 0);
 
+
+	 //Lighting
+
+	 int POINTLIGHT_NUMBER = 0;
 	 json settings;
 
 
@@ -85,6 +90,10 @@ public:
 		 TERRAIN_HEIGHT = settings["TERRAIN_HEIGHT"].get<float>();
 		 TERRAIN_SCALE = settings["TERRAIN_SCALE"].get<float>();
 		 TERRAIN_TILLING = settings["TERRAIN_TILLING"].get<int>();
+
+		 POINTLIGHT_NUMBER = settings["POINTLIGHT_NUMBER"].get<int>();
+		 std::vector<double> dir = (settings["DIRECTIONAL_LIGHT"].get<std::vector<double>>());
+		 DIRECTIONAL_LIGHT = glm::vec3(dir[0] , dir[1] , dir[2]);
 
 
 
