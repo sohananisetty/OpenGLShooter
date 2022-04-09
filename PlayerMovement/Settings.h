@@ -41,6 +41,7 @@ public:
 	 //Terrain
 	 float TERRAIN_HEIGHT = 0.0f;
 	 float TERRAIN_SCALE = 40.0f;
+	 int TERRAIN_TILLING = 40;
 
 	 json settings;
 
@@ -83,6 +84,7 @@ public:
 
 		 TERRAIN_HEIGHT = settings["TERRAIN_HEIGHT"].get<float>();
 		 TERRAIN_SCALE = settings["TERRAIN_SCALE"].get<float>();
+		 TERRAIN_TILLING = settings["TERRAIN_TILLING"].get<int>();
 
 
 

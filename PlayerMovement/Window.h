@@ -24,6 +24,8 @@ public:
 	GLfloat getZoomChange();
 	GLfloat getXpos() { return lastX; }
 	GLfloat getYpos() { return lastY; }
+	bool keys[1024];
+
 	bool mouseLeftClick;
 
 	void swapBuffers() { glfwSwapBuffers(mainWindow); }
@@ -38,7 +40,6 @@ private:
 	GLint width, height;
 	GLint bufferWidth, bufferHeight;
 
-	bool keys[1024];
 	GLfloat lastX, lastY, xChange, yChange,zoomChange;
 	bool mousedFirstMoved;
 

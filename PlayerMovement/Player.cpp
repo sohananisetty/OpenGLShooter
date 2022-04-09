@@ -30,17 +30,19 @@ glm::mat4 Player::GetModelMatrix(float yawOffset)
 }
 
 
-void Player::ProcessKeyboard(bool* keys, float deltaTime)
+void Player::ProcessKeyboard(bool* keys, float deltaTime , Terrain terrain)
 {
     float distance = this->objectSpeed * deltaTime;
+    float terrainHeight = terrain.getTerrainHeight(this->objectPosition.x, this->objectPosition.z);
     currentUpSpeed += GRAVITY * deltaTime;
     glm::vec3 currentPos = this->objectPosition;
+    
 
     objectPosition.y += currentUpSpeed * deltaTime;
 
-    if (objectPosition.y < 0.0f) {
+    if (objectPosition.y < terrainHeight) {
         currentUpSpeed = 0.0f;
-        objectPosition.y = 0.0f;
+        objectPosition.y = terrainHeight;
     }
 
     this->lastMovement = currentMovement;
@@ -136,11 +138,11 @@ void Player::updatePlayerVectors()
 bool Player::CheckCollision(Enemy& obj)
 {
     // collision x-axis?
-    bool collisionX = this->objectPosition.x + this->boundingBox[0] >= obj.objectPosition.x - glm::abs(obj.boundingBox[1]) &&
-        this->objectPosition.x - glm::abs(this->boundingBox[1]) <= obj.objectPosition.x + glm::abs(obj.boundingBox[0]);
+    bool collisionX = this->objectPosition.x + this->boundingBox[0] >= obj.objectPosition.x - glm::abs(obj.boundingBox[1]) - 0.05f &&
+        this->objectPosition.x - glm::abs(this->boundingBox[1]) <= obj.objectPosition.x + glm::abs(obj.boundingBox[0]) - 0.05f;
     // collision y-axis?
-    bool collisionY = this->objectPosition.z + this->boundingBox[4] >= obj.objectPosition.z - glm::abs(obj.boundingBox[5]) &&
-        this->objectPosition.z - glm::abs(this->boundingBox[4]) <= obj.objectPosition.z + glm::abs(obj.boundingBox[5]);
+    bool collisionY = this->objectPosition.z + this->boundingBox[4] >= obj.objectPosition.z - glm::abs(obj.boundingBox[5]) - 0.1f &&
+        this->objectPosition.z - glm::abs(this->boundingBox[4]) <= obj.objectPosition.z + glm::abs(obj.boundingBox[5]) - 0.1f;
     // collision only if on both axes
     return collisionX && collisionY;
 }
@@ -154,14 +156,16 @@ bool Player::CheckCollision(GameObject& obj)
     bool y2 = this->objectPosition.z - glm::abs(this->boundingBox[4]) <= obj.objectPosition.z + glm::abs(obj.boundingBox[5]);
 
 //    bool z1 = this->objectPosition.y + this->boundingBox[2] <= obj.objectPosition.y - glm::abs(obj.boundingBox[5]);
-    bool z2 = this->objectPosition.y - glm::abs(this->boundingBox[3]) <= obj.objectPosition.y + glm::abs(obj.boundingBox[2]);
+   // bool z2 = this->objectPosition.y - glm::abs(this->boundingBox[3]) <= obj.objectPosition.y + glm::abs(obj.boundingBox[2]);
 
     // collision x-axis?
     bool collisionX = x1 && x2;
     // collision y-axis?
     bool collisionY = y1 && y2;
 
+   /* if (z2)
+        std::cout << "z collision\n";*/
 
     // collision only if on both axes
-    return collisionX && collisionY &&z2;
+    return collisionX && collisionY;
 }

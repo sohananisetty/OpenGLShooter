@@ -33,6 +33,7 @@ void GameLevel::parseLevel(json level)
 
 		std::vector<double> position = (obj["position"].get<std::vector<double>>());
 		std::vector<double> scale = (obj["scale"].get<std::vector<double>>());
+		std::vector<double> rotation = (obj["rotation"].get<std::vector<double>>());
 		std::vector<double> color = (obj["color"].get<std::vector<double>>());
 		std::string path = obj["path"].get<std::string>();
 		bool useTex = obj["useTex"].get<bool>();
@@ -42,6 +43,8 @@ void GameLevel::parseLevel(json level)
 		gameobject.objectColor = glm::vec3(color[0], color[1], color[2]);
 		gameobject.LinkMesh(model);
 		gameobject.useTex = useTex;
+		gameobject.yaw = rotation[0];
+		gameobject.pitch = rotation[1];
 		objects.push_back(gameobject);
 
 	}

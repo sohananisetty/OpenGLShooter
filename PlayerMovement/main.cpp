@@ -18,6 +18,7 @@
 #include "Settings.h"
 #include "GameLevel.h"
 #include "TextRenderer.h"
+#include"Terrain.h"
 
 #include <iostream>
 #include <random>
@@ -28,6 +29,7 @@
 void bulletHandler(vector<Bullet>& bullets, vector<Enemy>& objects, Shader shader, float deltaTime);
 void playerCollisionCheck(Player player, vector<Enemy>& objects);
 void playerCollisionCheck(Player& player, vector<GameObject>& objects, float deltaTime);
+
 glm::vec3 spawnPosition(glm::vec3 playerPosition);
 
 Settings settings;
@@ -40,6 +42,7 @@ enum class GameState {
 
     GAME_ACTIVE,
     GAME_MENU,
+    GAME_INST,
     GAME_WIN
 };
 
@@ -63,13 +66,14 @@ glm::vec3 lightColour = glm::vec3(1.0, 1.0, 1.0);
 float crosshairRadius = 300.0f;
 
 GameState state = GameState::GAME_MENU;
+float score = 0.0f;
 
 int main()
 {
     GameLevel level;
     mainWindow = Window(settings.SCR_WIDTH, settings.SCR_HEIGHT);
     mainWindow.intitialise();
-    stbi_set_flip_vertically_on_load(true);
+//    stbi_set_flip_vertically_on_load(true);
 
 
     // build and compile shaders
@@ -80,8 +84,9 @@ int main()
     Shader textShader("Shaders/vertex_shader_text.vs", "Shaders/fragment_shader_text.fs");
 
     Shader spriteShader("Shaders/sprite_vertex_shader.vs", "Shaders/sprite_fragment_shader.fs");
-    Texture2D crosshair("cross2.png", "C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/sprites", false);
-    Texture2D menue("menue.jpg", "C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/sprites", false);
+    Texture2D crosshair("cross2.png", "C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/sprites", true);
+    Texture2D menue("menue.jpg", "C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/sprites", true);
+    Texture2D controls("controls2.png", "C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/sprites", false);
 
     SpriteRenderer spriteRenderer(spriteShader);
 
@@ -89,29 +94,42 @@ int main()
     // load models
     // -----------
     Model floorModel(("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/floor/floor.obj"), settings.TERRAIN_SCALE * 2);
-    // Model envModel(("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/Env/environment.obj"));
-
     Model boxModel(("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/box/box.obj"));
-
     Model bulletModel(("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/bullets/bullet.obj"));
-
+   
     Model zombieModel(("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/Mutant/Mutant.fbx"));
-
     Animation zombieRunAnimation("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/Mutant/Mutant.fbx", &zombieModel);
     Animation zombieMeleeAnimation("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/Mutant/MeeleCombo.fbx", &zombieModel);
-
     Animator zombieAnimator(&zombieRunAnimation);
-
-
+    
     Model playerModel(("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/MainPlayer/Player.fbx"));
-
     Animation playerRunAnimation("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/MainPlayer/RunForward.fbx", &playerModel);
     Animation playerRunBackAnimation("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/MainPlayer/RunBackward.fbx", &playerModel);
     Animation playerIdleAnimation("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/MainPlayer/Idle.fbx", &playerModel);
     Animation playerRunLeftAnimation("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/MainPlayer/RunLeft.fbx", &playerModel);
     Animation playerRunRightAnimation("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/MainPlayer/RunRight.fbx", &playerModel);
-
     Animator playerAnimator(&playerIdleAnimation);
+
+    vector<GameObject> terrainObjects;
+    Texture2D floorTexture("Floor D2.psd", "C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/floor", false);
+    vector <Texture2D> terrainTexures = { floorTexture };
+
+    //for (int i = 0; i < 1;i++) {
+                            
+
+        Terrain terrain(0,0, "height.png", "C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/sprites", terrainTexures,settings.TERRAIN_SCALE,settings.TERRAIN_HEIGHT,settings.TERRAIN_TILLING);
+
+        vector<Mesh> meshes; meshes.push_back(terrain.mesh);
+        Model terrainModel; terrainModel.meshes = meshes;
+
+        GameObject terrainObject(glm::vec3(terrain.x, 0.0f, terrain.z));
+        terrainObject.LinkMesh(terrainModel);
+
+        terrainObjects.push_back(terrainObject);
+    //}
+
+  
+
 
     //Init models
 
@@ -143,20 +161,60 @@ int main()
 
     {
 
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(0.9215f, 0.96078f, 0.9843f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        if (score == 50) {
+            state = GameState::GAME_WIN;
+            score = 0;
+        }
+
+
 
         if (state == GameState::GAME_MENU) {
 
             spriteShader.use();
             spriteShader.setMat4("projection", orthoProjection);
-            spriteRenderer.DrawSprite(menue, glm::vec2(0.0f,0.0f), glm::vec2(settings.SCR_WIDTH, settings.SCR_HEIGHT), 180.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+            spriteRenderer.DrawSprite(menue, glm::vec2(0.0f,0.0f), glm::vec2(settings.SCR_WIDTH, settings.SCR_HEIGHT),180.0f, glm::vec3(1.0f, 1.0f, 1.0f));
             
             Text.RenderText("Demon Slayer", 60.0f, 50.0f, 1.0f);
-            Text.RenderText("Press enter to start!", 200.0f,200.0f, 0.25f);
+            Text.RenderText("Press enter to start!", 200.0f, settings.SCR_HEIGHT-100.0f, 0.25f);
 
             if (mainWindow.getsKeys()[GLFW_KEY_ENTER]) {
+
+                state = GameState::GAME_INST;
+                mainWindow.keys[GLFW_KEY_ENTER] = false;
+
+            }
+        }
+
+        else if (state == GameState::GAME_INST) {
+
+            spriteRenderer.DrawSprite(controls, glm::vec2(50.0f, 300.0f), glm::vec2(settings.SCR_WIDTH-100.0f, settings.SCR_HEIGHT/600 *250.0f ), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+            Text.RenderText("Instructions", 300.0f, 50.0f, 0.5f , glm::vec3(0.0f));
+            Text.RenderText("Defeat monster to get points. Get 100 points to win!", 100.0f, 150.0f, 0.25f, glm::vec3(0.0f));
+
+            if (mainWindow.getsKeys()[GLFW_KEY_ENTER] ) {
                 state = GameState::GAME_ACTIVE;
+                mainWindow.keys[GLFW_KEY_ENTER] = false;
+            }
+
+        }
+
+        else if (state == GameState::GAME_WIN) {
+
+            spriteShader.use();
+            spriteShader.setMat4("projection", orthoProjection);
+            spriteRenderer.DrawSprite(menue, glm::vec2(0.0f, 0.0f), glm::vec2(settings.SCR_WIDTH, settings.SCR_HEIGHT), 180.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+            Text.RenderText("You Won!!!", 60.0f, 50.0f, 1.0f);
+
+
+            if (mainWindow.getsKeys()[GLFW_KEY_ENTER]) {
+                state = GameState::GAME_MENU;
+                mainWindow.keys[GLFW_KEY_ENTER] = false;
+
             }
         }
 
@@ -167,12 +225,13 @@ int main()
             deltaTime = currentFrame - lastFrame;
             lastFrame = currentFrame;
 
-
+            std::stringstream ss; ss << score;
+            Text.RenderText("Score:" + ss.str(), 350.0f, 10.0f, 0.3f);
 
             // input
             // -----
 
-            player.ProcessKeyboard(mainWindow.getsKeys(), deltaTime);
+            player.ProcessKeyboard(mainWindow.getsKeys(), deltaTime , terrain);
             player.ProcessMouseMovement(mainWindow.getXChange());
 
             playerCollisionCheck(player, enemies);
@@ -263,14 +322,52 @@ int main()
             shader.setMat4("projection", projection);
             shader.setMat4("view", view);
 
-            shader.setVec3("lightPosition", glm::vec3(camPos.x, camPos.y + 10.0f, camPos.z + 10.0f));
-            shader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
-            shader.setVec3("light.diffuse", 0.8f, 0.8f, 0.8f);
-            shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
-            shader.setBool("useTex", true);
+            shader.setVec3("viewPos", camPos);
+            shader.setInt("numPointLights" , 0);
+           
+            // directional light
+            shader.setVec3("dirLight.direction", -1.0f, -1.0f, 1.f);
+            shader.setVec3("dirLight.ambient", glm::vec3(0.2f));
+            shader.setVec3("dirLight.diffuse", glm::vec3(0.2f));
+            shader.setVec3("dirLight.specular", glm::vec3(0.2f));
 
-            shader.setMat4("model", floor.GetModelMatrix());
-            floor.Draw(shader);
+            // point light 1
+            shader.setVec3("pointLights[0].position", glm::vec3(3.0, 0.5, -3.0));
+            shader.setVec3("pointLights[0].ambient", glm::vec3(0.2f));
+            shader.setVec3("pointLights[0].diffuse", glm::vec3(0.8f));
+            shader.setVec3("pointLights[0].specular", glm::vec3(1.0f));
+            shader.setFloat("pointLights[0].constant", 1.0f);
+            shader.setFloat("pointLights[0].linear", 0.09f);
+            shader.setFloat("pointLights[0].quadratic", 0.032f);
+
+            // spotLight
+            shader.setVec3("spotLight.position", camPos);
+            shader.setVec3("spotLight.direction", player.objectPosition - camPos);
+            shader.setVec3("spotLight.ambient", glm::vec3(0.1f));
+            shader.setVec3("spotLight.diffuse", glm::vec3(0.8f));
+            shader.setVec3("spotLight.specular", glm::vec3(1.0f));
+            shader.setFloat("spotLight.constant", 1.0f);
+            shader.setFloat("spotLight.linear", 0.09f);
+            shader.setFloat("spotLight.quadratic", 0.032f);
+            shader.setFloat("spotLight.cutOff", glm::cos(glm::radians(10.5f)));
+            shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(100.5f)));
+
+            shader.setBool("useTex", true);
+            //shader.setMat4("model", floor.GetModelMatrix());
+            //floor.Draw(shader);
+           for (int i = 0; i < 1;i++) {
+                shader.setMat4("model", terrainObjects[i].GetModelMatrix());
+                terrainObjects[i].Draw(shader);
+
+            }
+           
+            level.Draw(shader);
+
+
+            //Check collisions
+
+            bulletHandler(bullets, enemies, shader, deltaTime);
+
 
             if (mainWindow.mouseLeftClick) {
                 glm::vec3 bulletCurrentPos = glm::vec3(player.objectPosition.x, 0.55f + player.objectPosition.y, player.objectPosition.z);
@@ -280,14 +377,6 @@ int main()
                 mainWindow.mouseLeftClick = false;
 
             }
-
-            //Check collisions
-
-            bulletHandler(bullets, enemies, shader, deltaTime);
-
-            level.Draw(shader);
-
-
             // 2D stuff
 
             spriteShader.use();
@@ -296,15 +385,14 @@ int main()
             glm::vec4 mod = view * glm::vec4(currentCursorPos.x, 0.0f, currentCursorPos.y, 1.0f);
             spriteRenderer.DrawSprite(crosshair, glm::vec2(mod.x, mod.z), glm::vec2(30.0f, 30.0f), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
-            /* std::cout << "player "<< player.objectPosition.y<<"\n";
-             std::cout << "x1:" << player.objectPosition.x + player.boundingBox[0] << "\n";
-             std::cout << "x2:" << player.objectPosition.x - glm::abs(player.boundingBox[1]) << "\n";
+             std::cout << "x1:" << player.objectPosition.x<<"\n";
+             //std::cout << "x2:" << player.objectposition.x - glm::abs(player.boundingbox[1]) << "\n";
 
-             std::cout << "z1:" << player.objectPosition.z + player.boundingBox[4] << "\n";
-             std::cout << "z2:" << player.objectPosition.z - glm::abs(player.boundingBox[5]) << "\n";
+             std::cout << "z1:" << player.objectPosition.z<<"\n";
+             //std::cout << "z2:" << player.objectposition.z - glm::abs(player.boundingbox[5]) << "\n";
 
-             std::cout << "y1:" << player.objectPosition.y + player.boundingBox[2] << "\n";
-             std::cout << "y2:" << player.objectPosition.y - glm::abs(player.boundingBox[3]) << "\n";*/
+             std::cout << "y1:" << player.objectPosition.y<<"\n";
+             //std::cout << "y2:" << player.objectposition.y - glm::abs(player.boundingbox[3]) << "\n";
 
 
 
@@ -327,6 +415,7 @@ void bulletHandler(vector<Bullet>& bullets, vector<Enemy>& objects, Shader shade
 
             if (bullets[i].CheckCollision(objects[j])) {
                 std::cout << "bullet collision\n";
+                score += 10;
                 bullets[i].destroyed = true;
                 objects[j].destroyed = true;
                 objects.erase(objects.begin() + j);
@@ -360,7 +449,8 @@ void playerCollisionCheck(Player player, vector<Enemy>& objects) {
     for (int j = 0; j < (int)objects.size(); j++) {
 
         if (player.CheckCollision(objects[j])) {
-            std::cout << "collision\n";
+            std::cout << "enemy collision\n";
+            score = 0.0f;
             //state = GameState::GAME_MENU;
             break;
         }
@@ -374,10 +464,18 @@ void playerCollisionCheck(Player& player, vector<GameObject>& objects, float del
     for (int j = 0; j < (int)objects.size(); j++) {
 
         if (player.CheckCollision(objects[j])) {
-            std::cout << "collision\n";
+            //std::cout << "world collision\n";
             float distance = player.objectSpeed * deltaTime;
 
-            if (player.lastMovement == Object_Movement::FORWARD)
+            if(player.objectPosition.y - glm::abs(player.boundingBox[3]) <= objects[j].objectPosition.y + glm::abs(objects[j].boundingBox[2]) && player.objectPosition.y - glm::abs(player.boundingBox[3]) + 0.1 >= objects[j].objectPosition.y + glm::abs(objects[j].boundingBox[2])) {
+                std::cout << "z collision\n";
+                
+                player.objectPosition.y -= player.currentUpSpeed * deltaTime;
+                player.currentUpSpeed = 0.0f;
+
+            }
+
+            else if (player.lastMovement == Object_Movement::FORWARD)
                 player.objectPosition -= player.objectFront * distance;
 
             else if (player.lastMovement == Object_Movement::BACKWARD)
@@ -389,16 +487,6 @@ void playerCollisionCheck(Player& player, vector<GameObject>& objects, float del
             else if (player.lastMovement == Object_Movement::RIGHT)
                 player.objectPosition -= player.objectRight * distance;
 
-            else if (player.lastMovement == Object_Movement::JUMP) {
-
-                player.objectPosition.y -= player.currentUpSpeed * deltaTime;
-
-                //player.objectPosition.y += GRAVITY * deltaTime;
-
-
-            }
-
-            //state = GameState::GAME_MENU;
             break;
         }
     }

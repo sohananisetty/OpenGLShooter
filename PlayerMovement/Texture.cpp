@@ -6,13 +6,17 @@
 Texture2D::Texture2D()
     : Width(0), Height(0), type(TextureType::DIFFUSE), path(""), Wrap_S(GL_REPEAT), Wrap_T(GL_REPEAT), Filter_Min(GL_LINEAR_MIPMAP_LINEAR), Filter_Max(GL_LINEAR)
 {
+    stbi_set_flip_vertically_on_load(true);
     glGenTextures(1, &this->ID);
 }
 
 
-Texture2D::Texture2D(const char* name, const std::string& directory, bool gamma)
+Texture2D::Texture2D(const char* name, const std::string& directory, bool flip)
     :type(TextureType::DIFFUSE), Wrap_S(GL_REPEAT), Wrap_T(GL_REPEAT), Filter_Min(GL_LINEAR_MIPMAP_LINEAR), Filter_Max(GL_LINEAR)
 {
+
+    stbi_set_flip_vertically_on_load(flip);
+
     std::string filename = std::string(name);
     path = directory + '/' + filename;
 
@@ -50,10 +54,10 @@ Texture2D::Texture2D(const char* name, const std::string& directory, bool gamma)
 }
 
 
-Texture2D::Texture2D(const aiTexture* texture, bool gamma)
+Texture2D::Texture2D(const aiTexture* texture, bool flip)
     :type(TextureType::DIFFUSE), Wrap_S(GL_REPEAT), Wrap_T(GL_REPEAT), Filter_Min(GL_LINEAR_MIPMAP_LINEAR), Filter_Max(GL_LINEAR)
 {
-    
+    stbi_set_flip_vertically_on_load(flip);
     path = "embedded";
     glGenTextures(1, &this->ID);
 

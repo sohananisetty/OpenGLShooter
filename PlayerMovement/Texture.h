@@ -30,9 +30,9 @@ public:
     unsigned int Filter_Max; // filtering mode if texture pixels > screen pixels
     // constructor (sets default texture modes)
     Texture2D();
-    Texture2D(const char* path, const std::string& directory, bool gamma);
+    Texture2D(const char* path, const std::string& directory, bool flip);
 
-    Texture2D(const aiTexture* texture, bool gamma);
+    Texture2D(const aiTexture* texture, bool flip);
 
 };
 

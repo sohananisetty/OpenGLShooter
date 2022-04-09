@@ -38,12 +38,14 @@ glm::mat4 GameObject::GetModelMatrix()
 {
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, this->objectPosition);
+    model = glm::rotate(model, glm::radians(this->pitch), this->objectRight);
+    model = glm::rotate(model, glm::radians(this->yaw), this->objectUp);
     model = glm::scale(model, glm::vec3(this->objectSize));
 
     return model;
 }
 
-glm::mat4 GameObject::GetModelMatrix(glm::vec3 scale , float yawOffset)
+glm::mat4 GameObject::GetModelMatrix(glm::vec3 scale , float yawOffset = 0.0f)
 {
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, this->objectPosition);
@@ -52,7 +54,6 @@ glm::mat4 GameObject::GetModelMatrix(glm::vec3 scale , float yawOffset)
 
     return model;
 }
-
 
 
 void GameObject::calcObjectVectors(float yaw, float pitch)

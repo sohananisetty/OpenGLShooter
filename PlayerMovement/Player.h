@@ -10,6 +10,7 @@
 #include"GameObject.h"
 #include "Enemy.h"
 #include "Settings.h"
+#include "Terrain.h"
 
 //enum class Player_Movement {
 //    FORWARD,
@@ -39,7 +40,7 @@ public:
 
 
     // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-    void ProcessKeyboard(bool* keys, float deltaTime);
+    void ProcessKeyboard(bool* keys, float deltaTime, Terrain terrain);
 
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
     void ProcessMouseMovement(float xoffset);
