@@ -38,9 +38,12 @@ Window mainWindow;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 float lastEnemyFrame = 1.0f;
+float currentFrame = 0.0f;
+float timeOffset = 0.0f;
 
-glm::vec3 lightPosition = glm::vec3(0.0, 10.0, 0.0);
-glm::vec3 lightColour = glm::vec3(1.0, 1.0, 1.0);
+//glm::vec3 lightPosition = glm::vec3(0.0, 10.0, 0.0);
+//glm::vec3 lightColour = glm::vec3(1.0, 1.0, 1.0);
+
 
 //float crosshairRadius = 300.0f;
 
@@ -66,7 +69,7 @@ int main()
     vector <Texture2D> terrainTexures = { gameManager.textures["floorTexture"] };
 
                             
-    Terrain terrain(0,0, "heightmap2.png", "C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/sprites", terrainTexures,settings.TERRAIN_SCALE,settings.TERRAIN_HEIGHT,settings.TERRAIN_TILLING);
+    Terrain terrain(0,0, "heightmap2.png", "../Assets/sprites", terrainTexures,settings.TERRAIN_SCALE,settings.TERRAIN_HEIGHT,settings.TERRAIN_TILLING);
 
     vector<Mesh> meshes; meshes.push_back(terrain.mesh);
     Model terrainModel; terrainModel.meshes = meshes;
@@ -97,10 +100,11 @@ int main()
         glClearColor(0.9215f, 0.96078f, 0.9843f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        if (gameManager.score == 50) {
+        if (gameManager.score == settings.WIN_SCORE) {
             gameManager.state = GameState::GAME_WIN;
             gameManager.score = 0;
         }
+       
 
 
 
@@ -110,8 +114,8 @@ int main()
             gameManager.shaders["spriteShader"].setMat4("projection", gameManager.orthoProjection);
             spriteRenderer.DrawSprite(gameManager.textures["menueTexture"], glm::vec2(0.0f, 0.0f), glm::vec2(settings.SCR_WIDTH, settings.SCR_HEIGHT), 180.0f, glm::vec3(1.0f, 1.0f, 1.0f));
             
-            Text.RenderText("Demon Slayer", 60.0f, 50.0f, 1.0f);
-            Text.RenderText("Press enter to start!", 200.0f, settings.SCR_HEIGHT-100.0f, 0.25f);
+            Text.RenderText("Demon Slayer", settings.SCR_WIDTH/10, 100.0f, settings.SCR_WIDTH/800.0f);
+            Text.RenderText("Press enter to start!", settings.SCR_WIDTH / 2.0f - settings.SCR_WIDTH / 4.0f, 100.0f + 96.0f* settings.SCR_WIDTH / 800.0f + 30.0f, 0.33);
 
             if (mainWindow.getsKeys()[GLFW_KEY_ENTER]) {
 
@@ -123,14 +127,22 @@ int main()
 
         else if (gameManager.state == GameState::GAME_INST) {
 
-            spriteRenderer.DrawSprite(gameManager.textures["controlsTexture"], glm::vec2(50.0f, 300.0f), glm::vec2(settings.SCR_WIDTH - 100.0f, settings.SCR_HEIGHT / 600 * 250.0f), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+            spriteRenderer.DrawSprite(gameManager.textures["controlsTexture"], glm::vec2(50.0f, settings.SCR_HEIGHT - settings.SCR_HEIGHT / 600 * 250.0f - 50), glm::vec2(settings.SCR_WIDTH - 150.0f, settings.SCR_HEIGHT / 600 * 250.0f), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
-            Text.RenderText("Instructions", 300.0f, 50.0f, 0.5f , glm::vec3(0.0f));
-            Text.RenderText("Defeat monster to get points. Get 100 points to win!", 100.0f, 150.0f, 0.25f, glm::vec3(0.0f));
+            Text.RenderText("Instructions", settings.SCR_WIDTH/2.0f - settings.SCR_WIDTH/3.0f, 50.0f, settings.SCR_WIDTH / 1200.0f, glm::vec3(0.0f));
+            Text.RenderText("Defeat the monsters to get points.", 50.0f, 50.0f + 96.0f * settings.SCR_WIDTH / 1200.0f + 50.0f, settings.SCR_WIDTH / 2400.0f, glm::vec3(0.0f));
+            Text.RenderText("Get " + std::to_string(settings.WIN_SCORE)+" points under " + std::to_string(settings.WIN_TIME/60) + " minutes to win!", 50.0f, 100.0f + 96.0f * settings.SCR_WIDTH / 1200.0f + 96.0f * settings.SCR_WIDTH / 2400.0f + 10.0f, settings.SCR_WIDTH / 2400.0f, glm::vec3(0.0f));
+
+            timeOffset = static_cast<float>(glfwGetTime());
 
             if (mainWindow.getsKeys()[GLFW_KEY_ENTER] ) {
                 gameManager.state = GameState::GAME_ACTIVE;
                 mainWindow.keys[GLFW_KEY_ENTER] = false;
+                playerAnimator.NewAnimation(&gameManager.animations["playerIdleAnimation"]);
+                gameManager.player.objectPosition = glm::vec3(0.0f);
+                bullets.clear();
+                enemies.clear();
+                gameManager.score = 0;
             }
 
         }
@@ -141,7 +153,24 @@ int main()
             gameManager.shaders["spriteShader"].setMat4("projection", gameManager.orthoProjection);
             spriteRenderer.DrawSprite(gameManager.textures["menueTexture"], glm::vec2(0.0f, 0.0f), glm::vec2(settings.SCR_WIDTH, settings.SCR_HEIGHT), 180.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
-            Text.RenderText("You Won!!!", 60.0f, 50.0f, 1.0f);
+            Text.RenderText("You Won!!!", settings.SCR_WIDTH / 2 - settings.SCR_WIDTH / 3, 100.0f, settings.SCR_WIDTH / 800.0f);
+
+
+            if (mainWindow.getsKeys()[GLFW_KEY_ENTER]) {
+                gameManager.state = GameState::GAME_MENU;
+                mainWindow.keys[GLFW_KEY_ENTER] = false;
+
+            }
+        }
+
+        else if (gameManager.state == GameState::GAME_LOSE) {
+
+            gameManager.shaders["spriteShader"].use();
+            gameManager.shaders["spriteShader"].setMat4("projection", gameManager.orthoProjection);
+            spriteRenderer.DrawSprite(gameManager.textures["menueTexture"], glm::vec2(0.0f, 0.0f), glm::vec2(settings.SCR_WIDTH, settings.SCR_HEIGHT), 180.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+            Text.RenderText("You Lose!!!", settings.SCR_WIDTH / 2.0f - settings.SCR_WIDTH / 3.0f, 100.0f, settings.SCR_WIDTH / 800.0f);
+            Text.RenderText("Press enter to try again.", settings.SCR_WIDTH / 2 - settings.SCR_WIDTH / 3, 100.0f+96.0f* settings.SCR_WIDTH / 800.0f + 50.0f, settings.SCR_WIDTH / 2400.0f);
 
 
             if (mainWindow.getsKeys()[GLFW_KEY_ENTER]) {
@@ -154,12 +183,21 @@ int main()
         else if (gameManager.state == GameState::GAME_ACTIVE) {
 
 
-            float currentFrame = static_cast<float>(glfwGetTime());
+            currentFrame = static_cast<float>(glfwGetTime()) - timeOffset;
             deltaTime = currentFrame - lastFrame;
             lastFrame = currentFrame;
 
+            if (gameManager.score < settings.WIN_SCORE && currentFrame >= (float)settings.WIN_TIME) {
+                gameManager.state = GameState::GAME_LOSE;
+                gameManager.score = 0;
+
+            }
+
             std::stringstream ss; ss << gameManager.score;
-            Text.RenderText("Score:" + ss.str(), 350.0f, 10.0f, 0.3f);
+            Text.RenderText("Score:" + ss.str(), 50.0f, 10.0f, 0.3f);
+            
+            Text.RenderText("Time: " + std::to_string((int)(currentFrame/60)) + ":" + std::to_string((int)fmod(currentFrame , 60)), settings.SCR_WIDTH-200, 10.0f, 0.3f);
+
 
             // input
             // -----

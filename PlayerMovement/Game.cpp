@@ -56,16 +56,16 @@ void Game::Init()
 
 void Game::InitAnimations()
 {
-    Animation zombieRunAnimation("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/Mutant/Mutant.fbx", &models["zombie"]);
-    Animation zombieMeleeAnimation("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/Mutant/MeeleCombo.fbx", &models["zombie"]);
+    Animation zombieRunAnimation("../Assets/Mutant/Mutant.fbx", &models["zombie"]);
+    Animation zombieMeleeAnimation("../Assets/Mutant/MeeleCombo.fbx", &models["zombie"]);
     //Animator zombieAnimator(&zombieRunAnimation);
     zombieAnimator = new Animator(&zombieRunAnimation);
 
-    Animation playerRunAnimation("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/MainPlayer/RunForward.fbx", &models["player"]);
-    Animation playerRunBackAnimation("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/MainPlayer/RunBackward.fbx", &models["player"]);
-    Animation playerIdleAnimation("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/MainPlayer/Idle.fbx", &models["player"]);
-    Animation playerRunLeftAnimation("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/MainPlayer/RunLeft.fbx", &models["player"]);
-    Animation playerRunRightAnimation("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/MainPlayer/RunRight.fbx", &models["player"]);
+    Animation playerRunAnimation("../Assets/MainPlayer/RunForward.fbx", &models["player"]);
+    Animation playerRunBackAnimation("../Assets/MainPlayer/RunBackward.fbx", &models["player"]);
+    Animation playerIdleAnimation("../Assets/MainPlayer/Idle.fbx", &models["player"]);
+    Animation playerRunLeftAnimation("../Assets/MainPlayer/RunLeft.fbx", &models["player"]);
+    Animation playerRunRightAnimation("../Assets/MainPlayer/RunRight.fbx", &models["player"]);
     Animator playerAnimator(&playerIdleAnimation);
 
     this->animations.insert(std::pair<string, Animation>("zombieRunAnimation", zombieRunAnimation));
@@ -88,11 +88,11 @@ void Game::InitAnimations()
 
 void Game::InitModels()
 {
-    Model floorModel(("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/floor/floor.obj"), settings.TERRAIN_TILLING);
-    Model boxModel(("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/box/box.obj"));
-    Model bulletModel(("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/bullets/bullet.obj"));
-    Model zombieModel(("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/Mutant/Mutant.fbx"));
-    Model playerModel(("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/MainPlayer/Player.fbx"));
+    Model floorModel(("../Assets/floor/floor.obj"), settings.TERRAIN_TILLING);
+    Model boxModel(("../Assets/box/box.obj"));
+    Model bulletModel(("../Assets/bullets/bullet.obj"));
+    Model zombieModel(("../Assets/Mutant/Mutant.fbx"));
+    Model playerModel(("../Assets/MainPlayer/Player.fbx"));
     //Model dropshipModel(("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/dropship/dropship.fbx"));
 
     this->models.insert(std::pair<string, Model>("floor", floorModel));
@@ -127,10 +127,10 @@ void Game::InitShaders()
 
 void Game::InitTextures(){
 
-    Texture2D crosshair("cross2.png", "C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/sprites", false);
-    Texture2D floorTexture("Floor D2.psd", "C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/floor", false);
-    Texture2D menue("menue.jpg", "C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/sprites", true);
-    Texture2D controls("controls2.png", "C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/sprites", false);
+    Texture2D crosshair("cross2.png", "../Assets/sprites", false);
+    Texture2D floorTexture("Floor D2.psd", "../Assets/floor", false);
+    Texture2D menue("menue.jpg", "../Assets/sprites", true);
+    Texture2D controls("controls2.png", "../Assets/sprites", false);
 
     this->textures.insert(std::pair<string, Texture2D>("crosshairTexture", crosshair));
     this->textures.insert(std::pair<string, Texture2D>("floorTexture", floorTexture));
@@ -157,12 +157,12 @@ void Game::configureLighting(Shader &shader , glm::vec3 spotPos){
 
     // directional light
     shader.setVec3("dirLight.direction", settings.DIRECTIONAL_LIGHT);
-    shader.setVec3("dirLight.ambient", glm::vec3(0.2f));
+    shader.setVec3("dirLight.ambient", glm::vec3(0.1f));
     shader.setVec3("dirLight.diffuse", glm::vec3(0.2f));
     shader.setVec3("dirLight.specular", glm::vec3(0.2f));
 
     // point light 1
-    shader.setVec3("pointLights[0].position", glm::vec3(3.0, 0.5, -3.0));
+    shader.setVec3("pointLights[0].position", glm::vec3(-3.0, 1.0, 15.0));
     shader.setVec3("pointLights[0].ambient", glm::vec3(0.2f));
     shader.setVec3("pointLights[0].diffuse", glm::vec3(0.8f));
     shader.setVec3("pointLights[0].specular", glm::vec3(1.0f));
@@ -173,14 +173,14 @@ void Game::configureLighting(Shader &shader , glm::vec3 spotPos){
     // spotLight
     shader.setVec3("spotLight.position", spotPos);
     shader.setVec3("spotLight.direction", player.objectPosition - spotPos);
-    shader.setVec3("spotLight.ambient", glm::vec3(0.2f));
+    shader.setVec3("spotLight.ambient", glm::vec3(0.1f));
     shader.setVec3("spotLight.diffuse", glm::vec3(0.8f));
     shader.setVec3("spotLight.specular", glm::vec3(1.0f));
     shader.setFloat("spotLight.constant", 1.0f);
     shader.setFloat("spotLight.linear", 0.09f);
     shader.setFloat("spotLight.quadratic", 0.032f);
     shader.setFloat("spotLight.cutOff", glm::cos(glm::radians(10.5f)));
-    shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(100.5f)));
+    shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.5f)));
 
 }
 
@@ -195,7 +195,7 @@ void Game::bulletHandler(vector<Bullet>& bullets, vector<Enemy>& objects, Shader
         for (int j = 0; j < (int)objects.size(); j++) {
 
             if (bullets[i].CheckCollision(objects[j])) {
-                std::cout << "bullet collision\n";
+               // std::cout << "bullet collision\n";
                 this->score += 10;
                 bullets[i].destroyed = true;
                 objects[j].destroyed = true;
@@ -229,7 +229,7 @@ void Game::playerCollisionCheck(Player player, vector<Enemy>& objects) {
     for (int j = 0; j < (int)objects.size(); j++) {
 
         if (player.CheckCollision(objects[j])) {
-            std::cout << "enemy collision\n";
+           // std::cout << "enemy collision\n";
             this->score = 0.0f;
             //state = GameState::GAME_MENU;
             break;
@@ -249,7 +249,7 @@ void Game::playerCollisionCheck(Player& player, vector<GameObject>& objects, flo
                 float distance = player.objectSpeed * deltaTime;
 
                 if (player.objectPosition.y - glm::abs(player.boundingBox[3]) <= objects[j].objectPosition.y + glm::abs(objects[j].boundingBox[2]) && player.objectPosition.y - glm::abs(player.boundingBox[3]) + 0.1 >= objects[j].objectPosition.y + glm::abs(objects[j].boundingBox[2])) {
-                    std::cout << "z collision\n";
+                    //std::cout << "z collision\n";
 
                     player.objectPosition.y -= player.currentUpSpeed * deltaTime;
                     player.currentUpSpeed = 0.0f;

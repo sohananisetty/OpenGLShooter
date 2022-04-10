@@ -15,7 +15,8 @@ public:
 	//Window
 	 unsigned int SCR_WIDTH = 800;
 	 unsigned int SCR_HEIGHT = 600;
-
+	 unsigned int WIN_SCORE = 50;
+	  int WIN_TIME = 60;
 	 //Bullet
 	 float BULLET_SPEED = 20.0f;
 	 float BULLET_SCALE = 0.05f;
@@ -68,6 +69,8 @@ public:
 
 		 SCR_WIDTH = settings["SCR_WIDTH"].get<int>();
 		 SCR_HEIGHT = settings["SCR_HEIGHT"].get<int>();
+		 WIN_SCORE = settings["WIN_SCORE"].get<int>();
+		 WIN_TIME = settings["WIN_TIME"].get<int>();
 
 		 BULLET_SPEED = settings["BULLET_SPEED"].get<float>();
 		 BULLET_SCALE = settings["BULLET_SCALE"].get<float>();

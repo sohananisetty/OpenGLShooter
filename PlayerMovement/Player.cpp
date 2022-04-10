@@ -84,7 +84,7 @@ void Player::ProcessKeyboard(bool* keys, float deltaTime , Terrain terrain)
 
     }
 
-    if (terrain.getTerrainHeight(this->objectPosition.x, this->objectPosition.z) - currentPos.y >= 0.5) {
+    if (terrain.getTerrainHeight(this->objectPosition.x, this->objectPosition.z) - currentPos.y >= 0.2) {
         this->objectPosition = currentPos;
     }
     currentUpSpeed += GRAVITY * deltaTime;

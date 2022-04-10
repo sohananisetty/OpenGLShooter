@@ -38,7 +38,8 @@ enum class GameState {
     GAME_ACTIVE,
     GAME_MENU,
     GAME_INST,
-    GAME_WIN
+    GAME_WIN,
+    GAME_LOSE
 };
 
 const float toRadians = 3.14159265f / 180.0f;
@@ -58,7 +59,7 @@ public:
     Animator* zombieAnimator;
 
 
-    int score;
+    unsigned int score;
 
     glm::mat4 perspectiveProjection , orthoProjection;
     glm::vec3 cameraOffset;
