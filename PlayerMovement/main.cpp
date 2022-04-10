@@ -42,7 +42,7 @@ float lastEnemyFrame = 1.0f;
 glm::vec3 lightPosition = glm::vec3(0.0, 10.0, 0.0);
 glm::vec3 lightColour = glm::vec3(1.0, 1.0, 1.0);
 
-float crosshairRadius = 300.0f;
+//float crosshairRadius = 300.0f;
 
 int main()
 {
@@ -53,30 +53,27 @@ int main()
 
     Game gameManager;
 
+    Animator zombieAnimator(&gameManager.animations["zombieRunAnimation"]);
+    Animator playerAnimator(&gameManager.animations["playerIdleAnimation"]);
 
+    SpriteRenderer spriteRenderer(gameManager.shaders["spriteShader"]);
+    TextRenderer Text(gameManager.shaders["textShader"], gameManager.orthoProjection);
+    Text.Load("Fonts/arialbd.ttf", 96);
 
-    Animation zombieRunAnimation("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/Mutant/Mutant.fbx", &gameManager.models["zombie"]);
-    Animation zombieMeleeAnimation("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/Mutant/MeeleCombo.fbx", &gameManager.models["zombie"]);
-    Animator zombieAnimator(&zombieRunAnimation);
-    
-    Animation playerRunAnimation("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/MainPlayer/RunForward.fbx", &gameManager.models["player"]);
-    Animation playerRunBackAnimation("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/MainPlayer/RunBackward.fbx", &gameManager.models["player"]);
-    Animation playerIdleAnimation("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/MainPlayer/Idle.fbx", &gameManager.models["player"]);
-    Animation playerRunLeftAnimation("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/MainPlayer/RunLeft.fbx", &gameManager.models["player"]);
-    Animation playerRunRightAnimation("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/MainPlayer/RunRight.fbx", &gameManager.models["player"]);
-    Animator playerAnimator(&playerIdleAnimation);
+    gameManager.level.Load("level1.json");
 
     vector<GameObject> terrainObjects;
     vector <Texture2D> terrainTexures = { gameManager.textures["floorTexture"] };
 
                             
-    Terrain terrain(0,0, "height.png", "C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/sprites", terrainTexures,settings.TERRAIN_SCALE,settings.TERRAIN_HEIGHT,settings.TERRAIN_TILLING);
+    Terrain terrain(0,0, "heightmap2.png", "C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/sprites", terrainTexures,settings.TERRAIN_SCALE,settings.TERRAIN_HEIGHT,settings.TERRAIN_TILLING);
 
     vector<Mesh> meshes; meshes.push_back(terrain.mesh);
     Model terrainModel; terrainModel.meshes = meshes;
 
     GameObject terrainObject(glm::vec3(terrain.x, 0.0f, terrain.z));
     terrainObject.LinkMesh(terrainModel);
+    terrainObject.objectColor = glm::vec3(0.5);
 
     terrainObjects.push_back(terrainObject);
 
@@ -84,11 +81,6 @@ int main()
 
 
 
-    SpriteRenderer spriteRenderer(gameManager.shaders["spriteShader"]);
-    TextRenderer Text(gameManager.shaders["textShader"], gameManager.orthoProjection);
-    Text.Load("Fonts/arialbd.ttf", 96);
-
-    gameManager.level.Load("level1.json");
 
     bool flagAnim = false;
 
@@ -244,7 +236,7 @@ int main()
 
 
             for (int i = 0; i < enemies.size(); i++) {
-                glm::vec3  enemyCurrentPosition = enemies[i].Move(deltaTime, glm::vec3(gameManager.player.objectPosition.x, 0.0f, gameManager.player.objectPosition.z));
+                glm::vec3  enemyCurrentPosition = enemies[i].Move(deltaTime, glm::vec3(gameManager.player.objectPosition.x, 0.0f, gameManager.player.objectPosition.z) , terrain);
                 gameManager.shaders["animationShader"].setMat4("model", enemies[i].GetModelMatrix(enemyCurrentPosition, settings.ENEMY_YAW_OFFSET));
 
 
@@ -266,14 +258,26 @@ int main()
             gameManager.configureLighting(gameManager.shaders["shader"] , camPos);
          
             gameManager.shaders["shader"].setBool("useTex", true);
+            gameManager.shaders["shader"].setMat4("model", gameManager.floorObject->GetModelMatrix());
 
-           for (int i = 0; i < 1;i++) {
+            gameManager.floorObject->Draw(gameManager.shaders["shader"]);
+
+          /* for (int i = 0; i < 1;i++) {
                gameManager.shaders["shader"].setMat4("model", terrainObjects[i].GetModelMatrix());
                 terrainObjects[i].Draw(gameManager.shaders["shader"]);
 
-            }
-           
+            }*/
+
            gameManager.level.Draw(gameManager.shaders["shader"]);
+
+           if (mainWindow.mouseLeftClick) {
+               glm::vec3 bulletCurrentPos = glm::vec3(gameManager.player.objectPosition.x, 0.55f + gameManager.player.objectPosition.y, gameManager.player.objectPosition.z);
+               Bullet bullet(bulletCurrentPos, settings.BULLET_SCALE, settings.BULLET_SPEED, gameManager.player.yaw);
+               bullet.LinkMesh(gameManager.models["bullet"]);
+               bullets.push_back(bullet);
+               mainWindow.mouseLeftClick = false;
+
+           }
 
 
             //Check collisions
@@ -281,19 +285,12 @@ int main()
             gameManager.bulletHandler(bullets, enemies, gameManager.shaders["shader"], deltaTime);
 
 
-            if (mainWindow.mouseLeftClick) {
-                glm::vec3 bulletCurrentPos = glm::vec3(gameManager.player.objectPosition.x, 0.55f + gameManager.player.objectPosition.y, gameManager.player.objectPosition.z);
-                Bullet bullet(bulletCurrentPos, settings.BULLET_SCALE, settings.BULLET_SPEED, gameManager.player.yaw);
-                bullet.LinkMesh(gameManager.models["bullet"]);
-                bullets.push_back(bullet);
-                mainWindow.mouseLeftClick = false;
-
-            }
+            
             // 2D stuff
 
             gameManager.shaders["spriteShader"].use();
             gameManager.shaders["spriteShader"].setMat4("projection", gameManager.orthoProjection);
-            glm::vec2 currentCursorPos = glm::vec2(gameManager.player.objectPosition.x + gameManager.player.objectFront.x * crosshairRadius + (float)settings.SCR_WIDTH / 2, gameManager.player.objectPosition.z + gameManager.player.objectFront.z * crosshairRadius + (float)settings.SCR_HEIGHT / 2);
+            glm::vec2 currentCursorPos = glm::vec2(gameManager.player.objectPosition.x + gameManager.player.objectFront.x * settings.CROSSHAIR_RADIUS + (float)settings.SCR_WIDTH / 2, gameManager.player.objectPosition.z + gameManager.player.objectFront.z * settings.CROSSHAIR_RADIUS + (float)settings.SCR_HEIGHT / 2);
             glm::vec4 mod = view * glm::vec4(currentCursorPos.x, 0.0f, currentCursorPos.y, 1.0f);
             spriteRenderer.DrawSprite(gameManager.textures["crosshairTexture"], glm::vec2(mod.x, mod.z), glm::vec2(30.0f, 30.0f), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
@@ -303,8 +300,8 @@ int main()
              //std::cout << "z1:" << player.objectPosition.z<<"\n";
              //std::cout << "z2:" << player.objectposition.z - glm::abs(player.boundingbox[5]) << "\n";
 
-             //std::cout << "y1:" << player.objectPosition.y<<"\n";
-             //std::cout << "y2:" << player.objectposition.y - glm::abs(player.boundingbox[3]) << "\n";
+            // std::cout << "y1:" << gameManager.player.objectPosition.y<<"\n";
+            // std::cout << "y2:" << gameManager.player.objectposition.y - glm::abs(player.boundingbox[3]) << "\n";
 
 
 

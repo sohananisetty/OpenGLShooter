@@ -1,0 +1,61 @@
+# Blender MTL File: 'ENV.blend'
+# Material Count: 5
+
+newmtl CliffEdge01_Mat
+Ns 179.999996
+Ka 1.000000 1.000000 1.000000
+Kd 0.500000 0.500000 0.500000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd CliffEdge01_Albedo.png
+map_Ks CliffEdge01_MetallicSmooth.png
+
+newmtl CliffEdge04_Mat
+Ns 179.999996
+Ka 1.000000 1.000000 1.000000
+Kd 0.500000 0.500000 0.500000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd CliffEdge04_Albedo.png
+map_Ks CliffEdge04_MetallicSmooth.png
+
+newmtl Ridge02_Mat
+Ns 179.999996
+Ka 1.000000 1.000000 1.000000
+Kd 0.500000 0.500000 0.500000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd ridgeAlbedo.png
+map_Ks ridgeSpecular.png
+
+newmtl RockSwamp01_Mat
+Ns 179.999996
+Ka 1.000000 1.000000 1.000000
+Kd 0.500000 0.500000 0.500000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd RockSwamp01_Albedo.png
+map_Ks RockSwamp01_MetallicSmooth.png
+
+newmtl atlas_01.001
+Ns 179.999996
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd dungeon_set_02_atlas_01.tga

@@ -44,6 +44,7 @@ public:
     glm::vec3 objectColor;
     bool  destroyed;
     bool useTex = true;
+    bool computeCollision = true;
     unsigned int VBO, VAO, EBO;
 
     // constructor(s)

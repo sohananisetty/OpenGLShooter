@@ -7,7 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "GameObject.h"
-
+#include "Terrain.h"
 #include <vector>
 #include<iostream>
 
@@ -22,7 +22,7 @@ public:
 
     Enemy(glm::vec3 spawnPosition, float size, float speed);
 
-    glm::vec3 Move(float dt, glm::vec3 targetPos);
+    glm::vec3 Move(float dt, glm::vec3 targetPos , Terrain terrain);
 
     glm::mat4 GetModelMatrix(glm::vec3  enemyPosition , float yawOffset);
 };

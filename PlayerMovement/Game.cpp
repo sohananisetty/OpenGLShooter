@@ -10,7 +10,7 @@
 
 Game::Game():state(GameState::GAME_MENU)
 {
-    //floorObject = new GameObject(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(settings.TERRAIN_SCALE));
+    floorObject = new GameObject(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(settings.TERRAIN_SCALE * 10));
 
     //player = new Player();
     player.objectSize = glm::vec3(settings.PLAYER_SCALE);
@@ -28,7 +28,7 @@ Game::Game():state(GameState::GAME_MENU)
 Game::~Game()
 {
     //delete player;
-    //delete floorObject;
+    delete floorObject;
     delete camera;
 }
 
@@ -79,7 +79,7 @@ void Game::InitAnimations()
     this->animations.insert(std::pair<string, Animation>("playerRunRightAnimation", playerRunRightAnimation));
 
     //this->animators.insert(std::pair<string, Animator>("zombieAnimator", zombieAnimator));
-    this->animators.insert(std::pair<string, Animator>("playerAnimator", playerAnimator));
+    //this->animators.insert(std::pair<string, Animator>("playerAnimator", playerAnimator));
 
 
 
@@ -93,12 +93,14 @@ void Game::InitModels()
     Model bulletModel(("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/bullets/bullet.obj"));
     Model zombieModel(("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/Mutant/Mutant.fbx"));
     Model playerModel(("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/MainPlayer/Player.fbx"));
+    //Model dropshipModel(("C:/users/abc/Documents/Visual Studio 2022/Projects/PlayerMovement/Assets/dropship/dropship.fbx"));
 
     this->models.insert(std::pair<string, Model>("floor", floorModel));
     this->models.insert(std::pair<string, Model>("box", boxModel));
     this->models.insert(std::pair<string, Model>("bullet", bulletModel));
     this->models.insert(std::pair<string, Model>("zombie", zombieModel));
     this->models.insert(std::pair<string, Model>("player", playerModel));
+    //this->models.insert(std::pair<string, Model>("dropship", dropshipModel));
 
     InitAnimations();
 
@@ -141,8 +143,8 @@ void Game::InitTextures(){
 
 void Game::InitGameObjects(){
 
-
-    //floorObject->LinkMesh(models["floor"]);
+    
+    floorObject->LinkMesh(models["floor"]);
     player.objectSize = glm::vec3(settings.PLAYER_SCALE);
     player.LinkMesh(models["player"]);
 
@@ -155,9 +157,9 @@ void Game::configureLighting(Shader &shader , glm::vec3 spotPos){
 
     // directional light
     shader.setVec3("dirLight.direction", settings.DIRECTIONAL_LIGHT);
-    shader.setVec3("dirLight.ambient", glm::vec3(0.05f));
-    shader.setVec3("dirLight.diffuse", glm::vec3(0.4f));
-    shader.setVec3("dirLight.specular", glm::vec3(0.4f));
+    shader.setVec3("dirLight.ambient", glm::vec3(0.2f));
+    shader.setVec3("dirLight.diffuse", glm::vec3(0.2f));
+    shader.setVec3("dirLight.specular", glm::vec3(0.2f));
 
     // point light 1
     shader.setVec3("pointLights[0].position", glm::vec3(3.0, 0.5, -3.0));
@@ -171,7 +173,7 @@ void Game::configureLighting(Shader &shader , glm::vec3 spotPos){
     // spotLight
     shader.setVec3("spotLight.position", spotPos);
     shader.setVec3("spotLight.direction", player.objectPosition - spotPos);
-    shader.setVec3("spotLight.ambient", glm::vec3(0.1f));
+    shader.setVec3("spotLight.ambient", glm::vec3(0.2f));
     shader.setVec3("spotLight.diffuse", glm::vec3(0.8f));
     shader.setVec3("spotLight.specular", glm::vec3(1.0f));
     shader.setFloat("spotLight.constant", 1.0f);
@@ -241,32 +243,36 @@ void Game::playerCollisionCheck(Player& player, vector<GameObject>& objects, flo
 
     for (int j = 0; j < (int)objects.size(); j++) {
 
-        if (player.CheckCollision(objects[j])) {
-            //std::cout << "world collision\n";
-            float distance = player.objectSpeed * deltaTime;
+        if (objects[j].computeCollision) {
+            if (player.CheckCollision(objects[j])) {
+                //std::cout << "world collision\n";
+                float distance = player.objectSpeed * deltaTime;
 
-            if (player.objectPosition.y - glm::abs(player.boundingBox[3]) <= objects[j].objectPosition.y + glm::abs(objects[j].boundingBox[2]) && player.objectPosition.y - glm::abs(player.boundingBox[3]) + 0.1 >= objects[j].objectPosition.y + glm::abs(objects[j].boundingBox[2])) {
-                std::cout << "z collision\n";
+                if (player.objectPosition.y - glm::abs(player.boundingBox[3]) <= objects[j].objectPosition.y + glm::abs(objects[j].boundingBox[2]) && player.objectPosition.y - glm::abs(player.boundingBox[3]) + 0.1 >= objects[j].objectPosition.y + glm::abs(objects[j].boundingBox[2])) {
+                    std::cout << "z collision\n";
 
-                player.objectPosition.y -= player.currentUpSpeed * deltaTime;
-                player.currentUpSpeed = 0.0f;
+                    player.objectPosition.y -= player.currentUpSpeed * deltaTime;
+                    player.currentUpSpeed = 0.0f;
 
+                }
+
+                else if (player.lastMovement == Object_Movement::FORWARD)
+                    player.objectPosition -= player.objectFront * distance;
+
+                else if (player.lastMovement == Object_Movement::BACKWARD)
+                    player.objectPosition += player.objectFront * distance;
+
+                else if (player.lastMovement == Object_Movement::LEFT)
+                    player.objectPosition += player.objectRight * distance;
+
+                else if (player.lastMovement == Object_Movement::RIGHT)
+                    player.objectPosition -= player.objectRight * distance;
+
+                break;
             }
-
-            else if (player.lastMovement == Object_Movement::FORWARD)
-                player.objectPosition -= player.objectFront * distance;
-
-            else if (player.lastMovement == Object_Movement::BACKWARD)
-                player.objectPosition += player.objectFront * distance;
-
-            else if (player.lastMovement == Object_Movement::LEFT)
-                player.objectPosition += player.objectRight * distance;
-
-            else if (player.lastMovement == Object_Movement::RIGHT)
-                player.objectPosition -= player.objectRight * distance;
-
-            break;
         }
+
+       
     }
 
 }

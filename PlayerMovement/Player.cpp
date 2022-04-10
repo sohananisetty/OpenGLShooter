@@ -34,16 +34,11 @@ void Player::ProcessKeyboard(bool* keys, float deltaTime , Terrain terrain)
 {
     float distance = this->objectSpeed * deltaTime;
     float terrainHeight = terrain.getTerrainHeight(this->objectPosition.x, this->objectPosition.z);
-    currentUpSpeed += GRAVITY * deltaTime;
-    glm::vec3 currentPos = this->objectPosition;
     
+    glm::vec3 currentPos = this->objectPosition;
+    float currentTerrainHeight = terrain.getTerrainHeight(currentPos.x, currentPos.z);
 
-    objectPosition.y += currentUpSpeed * deltaTime;
-
-    if (objectPosition.y < terrainHeight) {
-        currentUpSpeed = 0.0f;
-        objectPosition.y = terrainHeight;
-    }
+   
 
     this->lastMovement = currentMovement;
 
@@ -89,6 +84,16 @@ void Player::ProcessKeyboard(bool* keys, float deltaTime , Terrain terrain)
 
     }
 
+    if (terrain.getTerrainHeight(this->objectPosition.x, this->objectPosition.z) - currentPos.y >= 0.5) {
+        this->objectPosition = currentPos;
+    }
+    currentUpSpeed += GRAVITY * deltaTime;
+    objectPosition.y += currentUpSpeed * deltaTime;
+
+    if (objectPosition.y < terrainHeight) {
+        currentUpSpeed = 0.0f;
+        objectPosition.y = terrainHeight;
+    }
 
 
 }

@@ -165,14 +165,14 @@ vector<Texture2D> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType typ
             // if texture hasn't been loaded already, load it
             if (auto textureEmbedded = scene->GetEmbeddedTexture(str.C_Str())) {
                 //std::cout << "embedded textures\n";
-                Texture2D texture(textureEmbedded, true);
+                Texture2D texture(textureEmbedded, false);
                 texture.type = typeName;
                 textures.push_back(texture);
                 textures_loaded.push_back(texture);
                 //returned pointer is not null, read texture from memory
             }
             else {
-                Texture2D texture(str.C_Str(), this->directory, true);
+                Texture2D texture(str.C_Str(), this->directory, false);
                 texture.type = typeName;
                 textures.push_back(texture);
                 textures_loaded.push_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.

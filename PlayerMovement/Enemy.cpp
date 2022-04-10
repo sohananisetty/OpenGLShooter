@@ -6,11 +6,12 @@ Enemy::Enemy(glm::vec3 position, float size, float speed)
 {
 }
 
-glm::vec3 Enemy::Move(float dt, glm::vec3 targetPos)
+glm::vec3 Enemy::Move(float dt, glm::vec3 targetPos , Terrain terrain)
 {
 	if (!destroyed) {
-		this->objectFront = glm::normalize(targetPos - this->objectPosition);
-		this->objectPosition += objectFront * dt * this->objectSpeed;	
+		this->objectFront = glm::normalize(glm::vec3(targetPos.x - this->objectPosition.x,0.0f, targetPos.z - this->objectPosition.z));
+		this->objectPosition += objectFront * dt * this->objectSpeed;
+		this->objectPosition.y = terrain.getTerrainHeight(this->objectPosition.x, this->objectPosition.z);
 		calcObjectVectors(this->objectFront); 
 	}
 

@@ -53,6 +53,7 @@ public:
     GameLevel level;
 
     Player player;
+    GameObject* floorObject;
     Camera* camera;
     Animator* zombieAnimator;
 

@@ -20,6 +20,7 @@ public:
 	 float BULLET_SPEED = 20.0f;
 	 float BULLET_SCALE = 0.05f;
 	 float BULLET_DIE_DISTANCE = 10.0f;
+	 float CROSSHAIR_RADIUS = 300.0f;
 
 	 //Player
 	 float PLAYER_SCALE = 0.005f;
@@ -71,6 +72,7 @@ public:
 		 BULLET_SPEED = settings["BULLET_SPEED"].get<float>();
 		 BULLET_SCALE = settings["BULLET_SCALE"].get<float>();
 		 BULLET_DIE_DISTANCE = settings["BULLET_DIE_DISTANCE"].get<float>();
+		 CROSSHAIR_RADIUS = settings["CROSSHAIR_RADIUS"].get<float>();
 
 		 PLAYER_SCALE = settings["PLAYER_SCALE"].get<float>();
 		 PLAYER_YAW_OFFSET = settings["PLAYER_YAW_OFFSET"].get<float>();
