@@ -21,8 +21,6 @@ public:
     void Load(const char* file);
     // render level
     void Draw(Shader& shader);
-    // check if the level is completed (all non-solid tiles are destroyed)
-    bool IsCompleted();
 private:
     
     void parseLevel(json level);

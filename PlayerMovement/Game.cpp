@@ -108,8 +108,6 @@ void Game::InitModels()
 
 void Game::InitShaders()
 {
-    // build and compile shaders
-    // -------------------------
     Shader basicShader("Shaders/basic_vertex_shader.vs", "Shaders/basic_fragment_shader.fs");
     Shader shader("Shaders/vertex_shader.vs", "Shaders/fragment_shader.fs");
     Shader animationShader("Shaders/vertex_shader_animation.vs", "Shaders/fragment_shader_animation.fs");

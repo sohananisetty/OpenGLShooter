@@ -47,7 +47,7 @@ private:
 
 	void createCallbacks();
 	static void handleKeys(GLFWwindow* window, int key, int code, int action, int mode); // static required for callback
-	static void handleMouse(GLFWwindow* window, double xPos, double yPos); // static required for callback
+	static void handleMouse(GLFWwindow* window, double xPos, double yPos); 
 	static void handleMouseClick(GLFWwindow* window, int button, int action, int mode);
 	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
