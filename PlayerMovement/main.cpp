@@ -114,7 +114,7 @@ int main()
             gameManager.shaders["spriteShader"].setMat4("projection", gameManager.orthoProjection);
             spriteRenderer.DrawSprite(gameManager.textures["menueTexture"], glm::vec2(0.0f, 0.0f), glm::vec2(settings.SCR_WIDTH, settings.SCR_HEIGHT), 180.0f, glm::vec3(1.0f, 1.0f, 1.0f));
             
-            Text.RenderText("Demon Slayer", settings.SCR_WIDTH/10, 100.0f, settings.SCR_WIDTH/800.0f);
+            Text.RenderText("Monster Slayer", settings.SCR_WIDTH/10, 100.0f, settings.SCR_WIDTH/800.0f);
             Text.RenderText("Press enter to start!", settings.SCR_WIDTH / 2.0f - settings.SCR_WIDTH / 4.0f, 100.0f + 96.0f* settings.SCR_WIDTH / 800.0f + 30.0f, 0.33);
 
             if (mainWindow.getsKeys()[GLFW_KEY_ENTER]) {
