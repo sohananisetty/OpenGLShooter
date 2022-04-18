@@ -2,6 +2,9 @@
 ## A top down shooter made with OpenGL 
 <br/>
 
+![screenshot](https://raw.githubusercontent.com/vanquish630/OpenGLShooter/master/Assets/screenshots/openGLShooter.png)
+
+
 ### Please refer to MonsterSlayer.pdf for game rules and overall structure of the code
 <br/>
 
